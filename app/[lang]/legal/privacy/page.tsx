@@ -8,7 +8,8 @@ export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
 
-export function generateMetadata({ params }: { params: { lang: Lang } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ lang: Lang }> }): Promise<Metadata> {
+  const params = await props.params;
   const dict = getDict(params.lang);
   return {
     title: dict.legal.privacy.title,
@@ -20,7 +21,8 @@ export function generateMetadata({ params }: { params: { lang: Lang } }): Metada
   };
 }
 
-export default function PrivacyPage({ params }: { params: { lang: Lang } }) {
+export default async function PrivacyPage(props: { params: Promise<{ lang: Lang }> }) {
+  const params = await props.params;
   const dict = getDict(params.lang);
   return (
     <LegalDocument

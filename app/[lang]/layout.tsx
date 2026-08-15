@@ -39,10 +39,11 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-  if (!isLang(params.lang)) return {};
-  const dict = getDict(params.lang);
+  const { lang } = await params;
+  if (!isLang(lang)) return {};
+  const dict = getDict(lang);
 
   return {
     metadataBase: new URL(siteConfig.url),
@@ -52,7 +53,7 @@ export async function generateMetadata({
     },
     description: dict.meta.description,
     alternates: {
-      canonical: absoluteUrl(`/${params.lang}`),
+      canonical: absoluteUrl(`/${lang}`),
       languages: { en: absoluteUrl('/en'), ja: absoluteUrl('/ja') },
     },
     openGraph: {
@@ -60,21 +61,24 @@ export async function generateMetadata({
       siteName: dict.meta.siteName,
       title: `${dict.meta.siteName} — ${dict.meta.tagline}`,
       description: dict.meta.description,
-      locale: params.lang === 'ja' ? 'ja_JP' : 'en_US',
-      url: absoluteUrl(`/${params.lang}`),
+      locale: lang === 'ja' ? 'ja_JP' : 'en_US',
+      url: absoluteUrl(`/${lang}`),
     },
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { lang: string };
+  /** Next.js 15 から params は Promise。使う前に await する。 */
+  params: Promise<{ lang: string }>;
 }) {
-  if (!isLang(params.lang)) notFound();
-  const lang = params.lang as Lang;
+  const { lang: rawLang } = await params;
+
+  if (!isLang(rawLang)) notFound();
+  const lang = rawLang as Lang;
   const dict = getDict(lang);
   const categoryCounts = getCategoryCounts();
 

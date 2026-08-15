@@ -10,7 +10,8 @@ export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
 
-export function generateMetadata({ params }: { params: { lang: Lang } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ lang: Lang }> }): Promise<Metadata> {
+  const params = await props.params;
   const dict = getDict(params.lang);
   return {
     title: dict.legal.tokushoho.title,
@@ -32,7 +33,8 @@ function fill(value: string): string {
     .replace('__SITE_URL__', siteConfig.url);
 }
 
-export default function TokushohoPage({ params }: { params: { lang: Lang } }) {
+export default async function TokushohoPage(props: { params: Promise<{ lang: Lang }> }) {
+  const params = await props.params;
   const { lang } = params;
   const dict = getDict(lang);
 

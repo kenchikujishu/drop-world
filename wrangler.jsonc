@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "drop-world",
+
+  // OpenNext がビルドで生成する Worker。`npm run cf:build` で作られる。
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-08-14",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  // 静的アセット（HTML / CSS / JS / 画像）。Worker を起動せずに配信される。
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+
+  // NEXT_PUBLIC_* はビルド時にコードへ埋め込まれるため、ここ（実行時の vars）ではなく
+  // Workers Builds のビルド環境変数に設定する。→ docs/DEPLOY.md
+}

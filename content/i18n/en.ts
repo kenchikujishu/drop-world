@@ -391,7 +391,7 @@ export const en = {
           heading: 'Data collected by this website',
           body: [
             'The site is a set of static pages. It does not set cookies for tracking or advertising and does not embed third-party analytics or advertising scripts.',
-            'Our hosting provider, Vercel, records standard technical request logs — IP address, browser user agent, requested URL and timestamp — for security and reliability. These logs are retained for a limited period and are not used to build a profile of you.',
+            'Our hosting provider, Cloudflare, records standard technical request logs — IP address, browser user agent, requested URL and timestamp — for security and reliability. These logs are retained for a limited period and are not used to build a profile of you.',
           ],
         },
         {
@@ -412,7 +412,7 @@ export const en = {
           heading: 'Third parties we rely on',
           body: [
             '- Lemon Squeezy — payment processing, tax handling, receipts and file delivery',
-            '- Vercel — website hosting',
+            '- Cloudflare — website hosting, DNS, and email forwarding for our support address',
             'Both process data on servers outside Japan. We do not sell or share personal data with anyone else.',
           ],
         },

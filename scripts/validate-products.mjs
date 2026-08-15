@@ -10,6 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { CATEGORY_IDS, FORMAT_IDS, VIEW_IDS } from './taxonomy-ids.mjs';
+import { writeProductsIndex } from './write-products-index.mjs';
 
 const PRODUCTS_DIR = path.join(process.cwd(), 'content', 'products');
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
@@ -141,7 +142,13 @@ const pending = files.filter((file) => {
   return product.checkoutUrl === null;
 });
 
+/* 検証を通ったら索引ファイルを作り直す（Workers 用にJSONをバンドルへ埋め込むため）。 */
+const index = writeProductsIndex();
+
 console.log(`✓ 商品 ${files.length} 点、問題なし。`);
+if (index.written) {
+  console.log('  content/products-index.ts を更新しました（コミット対象）。');
+}
 if (pending.length > 0) {
   console.log(
     `\n⚠ うち ${pending.length} 点は checkoutUrl が未設定です（サイト上は「販売準備中」と表示されます）:`,

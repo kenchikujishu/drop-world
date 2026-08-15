@@ -1,5 +1,41 @@
 # 作業ログ
 
+## 2026-08-15 — ホスティングを Cloudflare Workers に変更
+
+ドメインを Cloudflare で取得済みだったため、Vercel をやめて Cloudflare に一本化した。
+
+### やったこと
+
+- **Next.js 14 → 15、React 18 → 19**。OpenNext のアダプタが Next 15 以上を要求するため。
+  `params` / `searchParams` が Promise になったので、公式 codemod で全ページを await 形式に移行
+- **Cloudflare Workers + [OpenNext](https://opennext.js.org/cloudflare)** を導入
+  （`wrangler.jsonc` / `open-next.config.ts` / `public/_headers`）
+- **`www` → apex の 301 リダイレクトを `middleware.ts` に実装**。
+  Cloudflare 側でリダイレクトルールを作らずに済む
+- プライバシーポリシーのホスティング事業者の記載を Vercel → Cloudflare に修正
+- `docs/DEPLOY.md` を Workers Builds 版に全面書き換え
+
+### 詰まったところ
+
+**Cloudflare Workers にファイルシステムが無い。** `lib/products.ts` が
+`fs.readdirSync` で商品 JSON を読んでいたため、Worker 上では商品0件のサイトになった
+（`npm run dev` では正常に見えるので気づきにくい）。
+
+→ `content/products-index.ts` を自動生成し、全 JSON を静的 import してバンドルに
+埋め込む形に変更。索引は `npm run validate:products` が作り直し、生成物はコミットする。
+
+**商品一覧ページの HTML に商品が1件も入っていなかった。** フィルタが `useSearchParams` を
+使う client component で、Suspense の fallback が `null` だったため。
+fallback を「絞り込み前の全件グリッド」に変更し、プリレンダー HTML に一覧が入るようにした
+（検索エンジンと JS 無効時のため）。これは Vercel でも同じ状態だった。
+
+### 確認したこと
+
+`npm run preview`（実際の Worker）で全ルート 200、商品6点表示、絞り込み動作、
+`www` リダイレクト実装、`npm run dev` も従来どおり動作。
+
+---
+
 ## 2026-08-15 — 初期構築（Lemon Squeezy 審査用）
 
 Next.js 14 + TypeScript で新規構築。`~/Desktop/map` と同じ流儀（CSS変数トークン +

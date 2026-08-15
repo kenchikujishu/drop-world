@@ -1,6 +1,6 @@
 /**
  * サイト全体の設定。環境変数が未設定でも動くよう、開発用の既定値を持たせている。
- * 本番では Vercel の Environment Variables に設定する。
+ * 本番では Cloudflare の Build variables に設定する（NEXT_PUBLIC_* はビルド時に埋め込まれるため）。
  */
 
 export const siteConfig = {

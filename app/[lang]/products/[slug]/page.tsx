@@ -23,7 +23,8 @@ export function generateStaticParams() {
   return LANGS.flatMap((lang) => getAllProducts().map((product) => ({ lang, slug: product.slug })));
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
+export async function generateMetadata(props: { params: Promise<Params> }): Promise<Metadata> {
+  const params = await props.params;
   const product = getProduct(params.slug);
   if (!product) return {};
 
@@ -49,7 +50,8 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   };
 }
 
-export default function ProductPage({ params }: { params: Params }) {
+export default async function ProductPage(props: { params: Promise<Params> }) {
+  const params = await props.params;
   const product = getProduct(params.slug);
   if (!product) notFound();
 

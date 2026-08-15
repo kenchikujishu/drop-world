@@ -7,5 +7,11 @@ out
 *.tsbuildinfo
 next-env.d.ts
 
+# Cloudflare / OpenNext
+.open-next
+.wrangler
+.dev.vars
+cloudflare-env.d.ts
+
 # 商品の zip は Lemon Squeezy 側にアップロードする。リポジトリには入れない。
 *.zip

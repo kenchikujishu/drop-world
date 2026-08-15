@@ -5,7 +5,8 @@ import { getDict, href } from '@/lib/i18n';
 import { getCategoryCounts, getFeatured } from '@/lib/products';
 import styles from './home.module.css';
 
-export default function HomePage({ params }: { params: { lang: Lang } }) {
+export default async function HomePage(props: { params: Promise<{ lang: Lang }> }) {
+  const params = await props.params;
   const { lang } = params;
   const dict = getDict(lang);
   const featured = getFeatured(4);

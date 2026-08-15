@@ -1,49 +1,41 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { RAW_PRODUCTS } from '@/content/products-index';
 import { productSchema, type Product } from './product-schema';
 import type { CategoryId } from '@/content/taxonomy';
 
 /**
  * 商品データの読み込み。`content/products/*.json` を1商品1ファイルで持つ。
- * サーバー専用（fs を使う）。クライアントコンポーネントから import しないこと。
+ *
+ * ⚠ ファイルシステムは読まない。Cloudflare Workers に fs が無いため、
+ *   実行時に fs を触ると商品0件のサイトになってしまう。
+ *   代わりに自動生成の `content/products-index.ts` が全 JSON を静的 import しており、
+ *   ビルド時にバンドルへ埋め込まれる（索引は validate:products が作り直す）。
  */
-
-const PRODUCTS_DIR = path.join(process.cwd(), 'content', 'products');
 
 let cache: Product[] | null = null;
 
 export function getAllProducts(): Product[] {
   if (cache) return cache;
 
-  if (!fs.existsSync(PRODUCTS_DIR)) {
-    cache = [];
-    return cache;
-  }
+  const products = RAW_PRODUCTS.map(({ file, data }) => {
+    const parsed = productSchema.safeParse(data);
 
-  const products = fs
-    .readdirSync(PRODUCTS_DIR)
-    .filter((file) => file.endsWith('.json'))
-    .map((file) => {
-      const raw = JSON.parse(fs.readFileSync(path.join(PRODUCTS_DIR, file), 'utf-8'));
-      const parsed = productSchema.safeParse(raw);
+    if (!parsed.success) {
+      // ここで落とさないと壊れたデータのままデプロイされる。
+      throw new Error(
+        `content/products/${file} がスキーマに適合しません:\n${parsed.error.issues
+          .map((i) => `  - ${i.path.join('.')}: ${i.message}`)
+          .join('\n')}`,
+      );
+    }
 
-      if (!parsed.success) {
-        // ここで落とさないと壊れたデータのままデプロイされる。
-        throw new Error(
-          `content/products/${file} がスキーマに適合しません:\n${parsed.error.issues
-            .map((i) => `  - ${i.path.join('.')}: ${i.message}`)
-            .join('\n')}`,
-        );
-      }
+    if (parsed.data.slug !== file.replace(/\.json$/, '')) {
+      throw new Error(
+        `content/products/${file}: slug "${parsed.data.slug}" がファイル名と一致していません。`,
+      );
+    }
 
-      if (parsed.data.slug !== file.replace(/\.json$/, '')) {
-        throw new Error(
-          `content/products/${file}: slug "${parsed.data.slug}" がファイル名と一致していません。`,
-        );
-      }
-
-      return parsed.data;
-    });
+    return parsed.data;
+  });
 
   cache = sortByNewest(products);
   return cache;

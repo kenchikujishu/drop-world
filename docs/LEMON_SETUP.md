@@ -26,7 +26,7 @@ Lemon Squeezy（以下 LS）は新規ストアを人力でレビューする。�
       この状態が並んでいると "coming soon サイト" と判断されうる。**LS 側で商品を作って URL を貼ること**
 - [ ] **サポート用メールアドレス** — `support@drop-world.com` で**実際に受信できる状態にする**。
       Cloudflare の Email Routing で Gmail 等へ転送するのが手軽（→ `docs/DEPLOY.md`）
-- [ ] **独自ドメインの接続** — `drop-world.com` を Vercel に繋ぐ（→ `docs/DEPLOY.md`）。
+- [ ] **独自ドメインの接続** — `drop-world.com` を Cloudflare Workers に繋ぐ（→ `docs/DEPLOY.md`）。
       サイト側のコードは `drop-world.com` 前提で設定済み
 - [ ] **特定商取引法に基づく表記** — `content/tokushoho.ts` の空欄
       （販売業者 / 運営責任者 / 所在地 / 電話番号）。国内向け販売で必要。
@@ -51,7 +51,7 @@ Lemon Squeezy（以下 LS）は新規ストアを人力でレビューする。�
 
 ### 手順
 
-1. LS 管理画面 → Settings → API で API キーを発行し、Vercel の環境変数に入れる
+1. LS 管理画面 → Settings → API で API キーを発行し、Cloudflare の Build variables に入れる
 
    ```
    LEMONSQUEEZY_API_KEY=...
@@ -84,7 +84,7 @@ Lemon Squeezy（以下 LS）は新規ストアを人力でレビューする。�
 
 - LS の価格は**最小通貨単位**（USD ならセント、JPY なら円）で返る。
   `DisplayPrice.amount` は通常の単位なので、USD は 100 で割る
-- 価格を LS 側で変えたら、Vercel で再デプロイするまでサイトの表示は変わらない
+- 価格を LS 側で変えたら、Cloudflare で再デプロイするまでサイトの表示は変わらない
   （`revalidate: 3600` を入れれば1時間で追従する）
 - `checkoutUrl` は API から取らず JSON に置いたままでよい。ここが変わることは滅多にない
 
@@ -93,7 +93,7 @@ Lemon Squeezy（以下 LS）は新規ストアを人力でレビューする。�
 ## 3. 決済フローの全体像
 
 ```
-サイト（Vercel）                         Lemon Squeezy
+サイト（Cloudflare Workers）              Lemon Squeezy
 ─────────────────                      ─────────────────
 商品ページ
   └ 購入ボタン ──────────────────────→ チェックアウト画面

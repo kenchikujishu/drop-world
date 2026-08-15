@@ -1,0 +1,5 @@
+# Cloudflare の静的アセット配信に渡すヘッダー。
+# Next.js のビルド成果物はファイル名にハッシュが入るので、恒久キャッシュしてよい。
+
+/_next/static/*
+  Cache-Control: public,max-age=31536000,immutable

@@ -15,6 +15,7 @@ import path from 'node:path';
 import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { CATEGORY_IDS, FORMAT_IDS, VIEW_IDS } from './taxonomy-ids.mjs';
+import { writeProductsIndex } from './write-products-index.mjs';
 
 const rl = readline.createInterface({ input, output });
 
@@ -127,6 +128,9 @@ fs.writeFileSync(jsonPath, `${JSON.stringify(product, null, 2)}\n`);
 const imageDir = path.join(process.cwd(), 'public', 'products', slug);
 fs.mkdirSync(imageDir, { recursive: true });
 
+// 索引を作り直しておかないと、この商品が npm run dev に出てこない。
+writeProductsIndex();
+
 rl.close();
 
 console.log(`
@@ -142,7 +146,7 @@ console.log(`
   3. Lemon Squeezy に商品を作って zip をアップし、checkoutUrl を JSON に貼る
   4. npm run validate:products
   5. npm run dev で見た目を確認
-  6. git add . && git commit && git push  → Vercel が自動デプロイ
+  6. git add . && git commit && git push  → Cloudflare が自動デプロイ
 
   手順の詳細は docs/ADD_PRODUCT.md に書いてあります。
 `);

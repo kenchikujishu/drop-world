@@ -8,6 +8,17 @@ import { DEFAULT_LANG, LANGS } from '@/content/taxonomy';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // www は apex に寄せる（canonical URL を1つに保つため）。
+  const host = request.headers.get('host') ?? '';
+  if (host.startsWith('www.')) {
+    const url = request.nextUrl.clone();
+    url.host = host.slice(4);
+    // 受信時のプロトコルをそのまま使うと http に落ちうるので明示する。
+    url.protocol = 'https:';
+    url.port = '';
+    return NextResponse.redirect(url, 301);
+  }
+
   const hasLang = LANGS.some(
     (lang) => pathname === `/${lang}` || pathname.startsWith(`/${lang}/`),
   );

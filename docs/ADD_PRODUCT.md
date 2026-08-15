@@ -1,7 +1,7 @@
 # 商品を1点追加する
 
 1商品 = `content/products/<slug>.json` 1ファイル + `public/products/<slug>/` の画像。
-この2つを足して push すれば、Vercel が自動でデプロイして商品ページが生える。
+この2つを足して push すれば、Cloudflare が自動でデプロイして商品ページが生える。
 
 ---
 
@@ -66,6 +66,10 @@ npm run validate:products
 JSON の形式、taxonomy に無い値、**画像ファイルが実在するか** まで見る。
 `checkoutUrl` が未設定の商品は警告として一覧表示される（エラーにはしない）。
 
+あわせて `content/products-index.ts` が作り直される。**この生成ファイルもコミットに含めること。**
+Cloudflare Workers にはファイルシステムが無いため、商品 JSON はこの索引経由で
+バンドルに埋め込まれる。含め忘れると本番でその商品だけ出てこない。
+
 ### 6. 見た目を確認する
 
 ```bash
@@ -82,7 +86,10 @@ npm run dev
 git add . && git commit -m "add product: <slug>" && git push
 ```
 
-Vercel が自動でデプロイする。手動デプロイの操作は不要。
+Cloudflare の Workers Builds が自動でビルドしてデプロイする。手動デプロイの操作は不要。
+
+商品が多くなってきたら、push 前に `npm run preview`（http://localhost:8787）で
+本番と同じ Worker 上の表示も見ておくと確実。
 
 ---
 

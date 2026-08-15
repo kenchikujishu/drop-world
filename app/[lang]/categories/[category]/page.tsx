@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ProductBrowser from '@/components/ProductBrowser';
+import ProductGrid from '@/components/ProductGrid';
 import {
   CATEGORY_IDS,
   LANGS,
@@ -23,7 +24,8 @@ function toCategoryId(value: string): CategoryId | null {
   return (CATEGORY_IDS as readonly string[]).includes(value) ? (value as CategoryId) : null;
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
+export async function generateMetadata(props: { params: Promise<Params> }): Promise<Metadata> {
+  const params = await props.params;
   const category = toCategoryId(params.category);
   if (!category) return {};
 
@@ -43,7 +45,8 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   };
 }
 
-export default function CategoryPage({ params }: { params: Params }) {
+export default async function CategoryPage(props: { params: Promise<Params> }) {
+  const params = await props.params;
   const category = toCategoryId(params.category);
   if (!category) notFound();
 
@@ -65,7 +68,9 @@ export default function CategoryPage({ params }: { params: Params }) {
       </div>
 
       <div className="container">
-        <Suspense fallback={null}>
+        {/* fallback を絞り込み前の全件にして、プリレンダー HTML に一覧が入るようにする。
+            （詳しい理由は app/[lang]/products/page.tsx のコメント） */}
+        <Suspense fallback={<ProductGrid products={products} lang={lang} dict={dict} />}>
           <ProductBrowser
             products={products}
             lang={lang}

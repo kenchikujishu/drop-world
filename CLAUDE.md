@@ -13,11 +13,30 @@ CAD 添景データ（人物・植栽・家具・車両など）を販売する�
 
 ## 技術構成
 
-- **Next.js 14 (App Router) + TypeScript + React 18**
+- **Next.js 15 (App Router) + TypeScript + React 19**
+- **ホスティング**: Cloudflare Workers（[OpenNext](https://opennext.js.org/cloudflare) アダプタ）
 - **DB なし。全ページ静的生成（SSG）**。商品は `content/products/*.json` をビルド時に読むだけ
 - **スタイリング**: `app/globals.css` の CSS 変数トークン + ルートごとの `*.module.css`（Tailwind は使わない）
 - **フォント**: Archivo（英字見出し）/ Zen Kaku Gothic New（日本語本文）/ IBM Plex Mono（数値・寸法・ファイル名）
 - **バリデーション**: zod（`lib/product-schema.ts`）
+
+### Cloudflare Workers で踏んではいけない地雷
+
+**Workers にファイルシステムは無い。実行時に `fs` を呼ぶコードを書かないこと。**
+
+`npm run dev`（Node）では動くのに本番で壊れる、という形で出る。実際、商品データを
+`fs.readdirSync` で読んでいたときは、Worker 上で商品0件のサイトになった。
+
+いまは `content/products-index.ts`（自動生成）が全 JSON を静的 import しており、
+ビルド時にバンドルへ埋め込まれる。索引は `npm run validate:products` が作り直す。
+**この生成物は Git にコミットする**（クローン直後に `npm run dev` が動くように）。
+
+本番に出す前は `npm run dev` ではなく **`npm run preview`**（実際の Worker が起動する）で確認する。
+
+### Next.js 15 の作法
+
+`params` と `searchParams` は Promise。ページ / レイアウト / `generateMetadata` では
+`const { lang } = await params;` のように await してから使う。
 
 ## デザインの決め事
 
@@ -59,15 +78,19 @@ Git に入れるのはサムネイル画像（`public/products/<slug>/`）だけ
 
 ```bash
 npm install
-npm run dev              # http://localhost:3000
-npm run validate:products   # 商品JSONの検査（build 前に自動で走る）
-npm run build
+npm run dev                 # http://localhost:3000 … 普段の開発
+npm run preview             # http://localhost:8787 … 本番と同じ Worker で確認
+npm run validate:products   # 商品JSONの検査 + 索引の再生成（build 前に自動で走る）
+npm run build               # Next.js のビルドだけ
+npm run cf:build            # Worker のバンドルまで
+npm run deploy              # 手元から直接デプロイ
 ```
 
 `npm run build` は `validate:products` → `next build` の順。壊れた商品 JSON は
 ビルドが通らないので、そのままデプロイされることはない。
 
-環境変数は `.env.local`（Git 管理外、`.env.local.example` を複製して作る）:
+ローカルの環境変数は `.env.local`（Git 管理外、`.env.local.example` を複製して作る）。
+既定値が本番と同じなので、未設定でも動く:
 
 - `NEXT_PUBLIC_SITE_URL` — 公開 URL。sitemap / robots / OGP / 構造化データが参照
 - `NEXT_PUBLIC_SUPPORT_EMAIL` — サポート窓口。Contact と特商法ページに出る
@@ -76,11 +99,12 @@ npm run build
 ## デプロイ
 
 - **リポジトリ**: `kenchikujishu/drop-world`
-- **本番**: https://drop-world.com（ドメインは Cloudflare 取得・DNS も Cloudflare、ホスティングは Vercel）
-- GitHub の `main` に push → **Vercel が自動デプロイ**（手動作業は不要）
-- 本番の環境変数は Vercel の Project Settings → Environment Variables で管理する
+- **本番**: https://drop-world.com（ドメイン・DNS・ホスティング・メールすべて Cloudflare）
+- GitHub の `main` に push → **Workers Builds が自動デプロイ**（手動作業は不要）
+- `NEXT_PUBLIC_*` はビルド時に埋め込まれるので、Cloudflare の **Build variables** に入れる
+  （実行時の Variables ではない）
 
-初期セットアップ（Vercel のインポート、DNS レコード、Email Routing）は `docs/DEPLOY.md`。
+初期セットアップ（Workers Builds の接続、カスタムドメイン、Email Routing）は `docs/DEPLOY.md`。
 
 ## 未対応・残タスク
 

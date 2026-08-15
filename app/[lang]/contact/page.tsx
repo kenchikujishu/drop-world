@@ -9,7 +9,8 @@ export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
 
-export function generateMetadata({ params }: { params: { lang: Lang } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ lang: Lang }> }): Promise<Metadata> {
+  const params = await props.params;
   const dict = getDict(params.lang);
   return {
     title: dict.contact.title,
@@ -21,7 +22,8 @@ export function generateMetadata({ params }: { params: { lang: Lang } }): Metada
   };
 }
 
-export default function ContactPage({ params }: { params: { lang: Lang } }) {
+export default async function ContactPage(props: { params: Promise<{ lang: Lang }> }) {
+  const params = await props.params;
   const { lang } = params;
   const dict = getDict(lang);
 
