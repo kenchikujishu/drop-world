@@ -75,8 +75,12 @@ npm run build
 
 ## デプロイ
 
-GitHub の `main` に push → **Vercel が自動デプロイ**（手動作業は不要）。
-本番の環境変数は Vercel の Project Settings → Environment Variables で管理する。
+- **リポジトリ**: `kenchikujishu/drop-world`
+- **本番**: https://drop-world.com（ドメインは Cloudflare 取得・DNS も Cloudflare、ホスティングは Vercel）
+- GitHub の `main` に push → **Vercel が自動デプロイ**（手動作業は不要）
+- 本番の環境変数は Vercel の Project Settings → Environment Variables で管理する
+
+初期セットアップ（Vercel のインポート、DNS レコード、Email Routing）は `docs/DEPLOY.md`。
 
 ## 未対応・残タスク
 

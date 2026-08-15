@@ -5,6 +5,7 @@ CAD 添景データ（人物・植栽・家具・車両など）を販売する�
 このサイトはカタログと外部チェックアウトへの導線に徹する。
 
 日英バイリンガル（`/en` `/ja`）、全ページ静的生成、DB なし。
+本番: https://drop-world.com（Vercel + Cloudflare DNS）
 
 ```bash
 npm install
@@ -18,6 +19,7 @@ npm run dev        # http://localhost:3000
 | --- | --- |
 | [CLAUDE.md](CLAUDE.md) | 技術構成・設計の決め事・残タスク |
 | [docs/ADD_PRODUCT.md](docs/ADD_PRODUCT.md) | 商品を1点追加する手順 |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Vercel + Cloudflare（drop-world.com）のセットアップ |
 | [docs/LEMON_SETUP.md](docs/LEMON_SETUP.md) | 審査に出す前のチェックリスト / 通過後の API 連携 |
 
 ## スクリプト

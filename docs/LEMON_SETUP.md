@@ -24,9 +24,10 @@ Lemon Squeezy（以下 LS）は新規ストアを人力でレビューする。�
       架空の商品のまま審査に出すと落ちる
 - [ ] **`checkoutUrl`** — 全商品 `null`。サイト上は「販売準備中」と出るので、
       この状態が並んでいると "coming soon サイト" と判断されうる。**LS 側で商品を作って URL を貼ること**
-- [ ] **サポート用メールアドレス** — `NEXT_PUBLIC_SUPPORT_EMAIL`。いまは仮の
-      `support@dropworld.example`。実在するアドレスにする
-- [ ] **独自ドメイン** — `NEXT_PUBLIC_SITE_URL` を実ドメインに。Vercel でドメインを接続する
+- [ ] **サポート用メールアドレス** — `support@drop-world.com` で**実際に受信できる状態にする**。
+      Cloudflare の Email Routing で Gmail 等へ転送するのが手軽（→ `docs/DEPLOY.md`）
+- [ ] **独自ドメインの接続** — `drop-world.com` を Vercel に繋ぐ（→ `docs/DEPLOY.md`）。
+      サイト側のコードは `drop-world.com` 前提で設定済み
 - [ ] **特定商取引法に基づく表記** — `content/tokushoho.ts` の空欄
       （販売業者 / 運営責任者 / 所在地 / 電話番号）。国内向け販売で必要。
       所在地と電話番号は「請求があったら遅滞なく開示します」という書き方も認められている
