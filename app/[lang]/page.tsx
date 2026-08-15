@@ -19,7 +19,6 @@ export default async function HomePage(props: { params: Promise<{ lang: Lang }> 
         <div className={`container ${styles.heroInner}`}>
           <p className="kicker">{dict.home.heroKicker}</p>
           <h1 className={styles.heroTitle}>{dict.home.heroTitle}</h1>
-          <p className={styles.heroLead}>{dict.home.heroLead}</p>
           <div className={styles.heroActions}>
             <Link href={href(lang, '/products')} className="btn">
               {dict.home.heroCta}

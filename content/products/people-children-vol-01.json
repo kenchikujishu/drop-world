@@ -1,0 +1,57 @@
+{
+  "slug": "people-children-vol-01",
+  "title": {
+    "en": "People — Children Vol.01",
+    "ja": "人物 子ども Vol.01"
+  },
+  "summary": {
+    "en": "16 children aged roughly 4 to 10, standing, walking and pointing, in four views each.",
+    "ja": "4〜10歳ほどの子ども16点。立つ・歩く・指さす姿を、それぞれ4方向で作図。"
+  },
+  "description": {
+    "en": "Children for housing, school, park and retail drawings. Sixteen figures aged roughly four to ten, in postures that read at a glance — standing, walking, pointing, looking up.\n\nHeights run from 1,000 to 1,400 mm, which is what keeps a family group believable next to the adults in our other sets. Line weights match People — Site & Street Vol.01, so the two sets can be mixed in one elevation without adjustment. Includes DWG, DXF, a layered AI file and transparent PNGs.",
+    "ja": "住宅・学校・公園・商業施設の図面のための子どもです。4〜10歳ほどの16点を、ひと目で姿勢が分かるポーズ（立つ・歩く・指さす・見上げる）で収録しています。\n\n身長は 1,000〜1,400mm。当店の大人のセットと並べたときに家族連れとして自然に見える寸法にしています。線の太さは「人物 現場・街路 Vol.01」と揃えてあるので、2つのセットを同じ立面図に混ぜても調整は不要です。DWG、DXF、レイヤー付き AI、背景透過 PNG を同梱。"
+  },
+  "category": "people",
+  "views": [
+    "elevation",
+    "multi-angle"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "png"
+  ],
+  "itemCount": 16,
+  "fileSize": "7.8 MB",
+  "price": {
+    "amount": 9.99,
+    "currency": "USD"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/people-children-vol-01/people-children-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/people-children-vol-01/people-children-vol-01-ai.zip"
+    }
+  ],
+  "checkoutUrl": null,
+  "lemonVariantId": null,
+  "thumbnail": "/products/people-children-vol-01/thumb.svg",
+  "gallery": [
+    "/products/people-children-vol-01/01.svg",
+    "/products/people-children-vol-01/02.svg",
+    "/products/people-children-vol-01/03.svg"
+  ],
+  "tags": [
+    "scale figure",
+    "child",
+    "family"
+  ],
+  "featured": true,
+  "publishedAt": "2026-08-10"
+}

@@ -1,0 +1,57 @@
+{
+  "slug": "animal-cats-vol-01",
+  "title": {
+    "en": "Cats — Elevation Vol.01",
+    "ja": "猫 立面 Vol.01"
+  },
+  "summary": {
+    "en": "12 cats standing, sitting, walking and curled up, at true shoulder heights.",
+    "ja": "猫12点。立位・座位・歩行・丸まった姿勢を実寸で。"
+  },
+  "description": {
+    "en": "Cats for interior elevations, courtyard and streetscape drawings. Twelve animals — standing, sitting, walking, and curled up asleep — drawn in side and three-quarter views.\n\nShoulder heights run from 230 to 300 mm. As with the rest of the catalogue, line weights are consistent with the People and Dogs sets so everything can be mixed in one drawing. Includes DWG, DXF, a layered AI file and transparent PNGs.",
+    "ja": "室内の立面図、中庭や街並みの図面のための猫です。立つ・座る・歩く・丸まって寝る、の12点を側面と斜めから作図しています。\n\n体高は 230〜300mm。カタログの他の商品と同様、人物セット・犬セットと線の太さを揃えているので、同じ図面に混ぜて使えます。DWG、DXF、レイヤー付き AI、背景透過 PNG を同梱。"
+  },
+  "category": "animal",
+  "views": [
+    "elevation",
+    "multi-angle"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "png"
+  ],
+  "itemCount": 12,
+  "fileSize": "5.2 MB",
+  "price": {
+    "amount": 7.99,
+    "currency": "USD"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/animal-cats-vol-01/animal-cats-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/animal-cats-vol-01/animal-cats-vol-01-ai.zip"
+    }
+  ],
+  "checkoutUrl": null,
+  "lemonVariantId": null,
+  "thumbnail": "/products/animal-cats-vol-01/thumb.svg",
+  "gallery": [
+    "/products/animal-cats-vol-01/01.svg",
+    "/products/animal-cats-vol-01/02.svg",
+    "/products/animal-cats-vol-01/03.svg"
+  ],
+  "tags": [
+    "cat",
+    "pet",
+    "interior"
+  ],
+  "featured": false,
+  "publishedAt": "2026-08-02"
+}

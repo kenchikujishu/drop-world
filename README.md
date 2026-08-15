@@ -1,6 +1,6 @@
 # drop world
 
-CAD 添景データ（人物・植栽・家具・車両など）を販売するストア。
+CAD 添景データ（人物・植栽・動物）を販売するストア。
 決済とファイル配信は [Lemon Squeezy](https://www.lemonsqueezy.com/) が担当し、
 このサイトはカタログと外部チェックアウトへの導線に徹する。
 
@@ -33,6 +33,7 @@ npm run preview    # http://localhost:8787 … 本番と同じ Worker で確認
 | `npm run build` | 検査 → Next.js のビルド |
 | `npm run cf:build` | 検査 → Worker のバンドルまで |
 | `npm run deploy` | 手元から直接デプロイ |
+| `node scripts/generate-artwork.mjs` | 商品サムネイルの添景イラストを再生成 |
 
 ## 構成
 

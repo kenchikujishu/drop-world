@@ -15,7 +15,7 @@ export const en = {
     siteName: 'drop world',
     tagline: 'CAD entourage, drawn for architects',
     description:
-      'drop world sells original CAD entourage libraries — people, trees, furniture, vehicles and more — as ready-to-use DWG, DXF, AI and PNG files for architectural drawings.',
+      'drop world sells original CAD entourage libraries — people, vegetation and animals — as ready-to-use DWG, DXF, AI and PNG files for architectural drawings.',
   },
 
   nav: {
@@ -63,15 +63,13 @@ export const en = {
 
   home: {
     heroKicker: 'CAD entourage library',
-    heroTitle: 'Entourage that keeps your drawings honest.',
-    heroLead:
-      'Scale figures, trees, furniture and vehicles drawn at real dimensions, on tidy layers, ready to paste into your plan, section or elevation. Every set is drawn in-house by drop world.',
+    heroTitle: 'DROP WORLD',
     heroCta: 'Browse products',
     heroCtaSecondary: 'Read the license',
     featuredTitle: 'Featured sets',
     featuredLead: 'Recently released libraries.',
     categoriesTitle: 'Browse by category',
-    categoriesLead: 'Eight subjects, each drawn in plan, elevation, section and axonometric.',
+    categoriesLead: 'Three subjects, each drawn in plan, elevation and multiple angles.',
     howTitle: 'How it works',
     howLead: 'Three steps, no account needed on our side.',
     howSteps: [

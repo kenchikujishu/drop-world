@@ -6,7 +6,7 @@ export const ja: Dictionary = {
     siteName: 'drop world',
     tagline: '設計図のための、CAD添景',
     description:
-      'drop world は、人物・樹木・家具・車両などの CAD 添景データを DWG / DXF / AI / PNG 形式で販売するストアです。すべて自社で作図したオリジナルデータです。',
+      'drop world は、人物・植栽・動物の CAD 添景データを DWG / DXF / AI / PNG 形式で販売するストアです。すべて自社で作図したオリジナルデータです。',
   },
 
   nav: {
@@ -54,15 +54,13 @@ export const ja: Dictionary = {
 
   home: {
     heroKicker: 'CAD 添景ライブラリ',
-    heroTitle: '図面の縮尺に、嘘をつかない添景。',
-    heroLead:
-      '人物・樹木・家具・車両を実寸で作図し、レイヤーを整理した状態で収録。平面・断面・立面のどこにでも、そのまま貼り込めます。すべて drop world が自社で描いたデータです。',
+    heroTitle: 'DROP WORLD',
     heroCta: '商品を見る',
     heroCtaSecondary: 'ライセンスを読む',
     featuredTitle: '注目のセット',
     featuredLead: '最近公開したライブラリ。',
     categoriesTitle: 'カテゴリから探す',
-    categoriesLead: '8つの被写体を、平面・立面・断面・アクソメで作図しています。',
+    categoriesLead: '3つの被写体を、平面・立面・複数アングルで作図しています。',
     howTitle: 'ご購入の流れ',
     howLead: '3ステップ。当サイトでの会員登録は不要です。',
     howSteps: [

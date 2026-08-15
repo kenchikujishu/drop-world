@@ -21,28 +21,14 @@ export type Term<T extends string> = {
 /* Category — 被写体                                                    */
 /* ------------------------------------------------------------------ */
 
-export const CATEGORY_IDS = [
-  'people',
-  'vegetation',
-  'furniture',
-  'vehicle',
-  'animal',
-  'decoration',
-  'building',
-  'background',
-] as const;
+export const CATEGORY_IDS = ['people', 'vegetation', 'animal'] as const;
 
 export type CategoryId = (typeof CATEGORY_IDS)[number];
 
 export const CATEGORIES: Term<CategoryId>[] = [
   { id: 'people', label: { en: 'People', ja: '人物' } },
   { id: 'vegetation', label: { en: 'Vegetation', ja: '植栽' } },
-  { id: 'furniture', label: { en: 'Furniture', ja: '家具' } },
-  { id: 'vehicle', label: { en: 'Vehicle', ja: '車両' } },
   { id: 'animal', label: { en: 'Animal', ja: '動物' } },
-  { id: 'decoration', label: { en: 'Decoration', ja: '小物' } },
-  { id: 'building', label: { en: 'Building', ja: '建物' } },
-  { id: 'background', label: { en: 'Background', ja: '背景' } },
 ];
 
 /* ------------------------------------------------------------------ */

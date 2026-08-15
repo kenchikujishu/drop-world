@@ -1,6 +1,6 @@
 # drop world
 
-CAD 添景データ（人物・植栽・家具・車両など）を販売するストア。決済とファイル配信は
+CAD 添景データ（人物・植栽・動物）を販売するストア。決済とファイル配信は
 **Lemon Squeezy（以下 LS）** に任せ、このサイトは「カタログ + 外部チェックアウトへの導線」に徹する。
 
 ## いまの状況
@@ -13,8 +13,9 @@ CAD 添景データ（人物・植栽・家具・車両など）を販売する�
 審査通過後は商品 JSON に `checkoutUrl` を入れれば購入ボタンに切り替わる
 （`checkoutUrl` が `downloads` より優先される）。
 
-商品は6点入っているが、いずれも **仮データ + プレースホルダー画像**（`PREVIEW PENDING` の文字入り）
-**+ 中身が README だけのダミー zip**。審査に出す前に実データへ差し替えること。→ `docs/LEMON_SETUP.md`
+商品は6点。**サムネイルは `scripts/generate-artwork.mjs` が生成した SVG の添景イラスト**で、
+実際の CAD データを書き出したものではない。zip は中身が README だけのダミー。
+審査に出す前に実データへ差し替えること。→ `docs/LEMON_SETUP.md`
 
 ## 技術構成
 
@@ -117,7 +118,7 @@ npm run deploy              # 手元から直接デプロイ
 - `content/tokushoho.ts` の `value: ''` の項目（販売業者 / 運営責任者 / 所在地 / 電話番号）が空。
   サイト上は赤い「（記載準備中）」として表示される。**国内向け販売の前に埋めること**
 - 全商品の `checkoutUrl` が `null`。いまは `downloads` による直接配布で動いている
-- 商品のサムネイルがプレースホルダー SVG（`scripts/generate-placeholders.mjs` 生成）
+- サムネイルは生成した SVG イラスト（`scripts/generate-artwork.mjs`）。実データの書き出しではない
 - `public/downloads/` の zip は中身が README だけのダミー
 
 ### 公開 URL
