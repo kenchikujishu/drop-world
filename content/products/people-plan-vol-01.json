@@ -13,11 +13,31 @@
     "ja": "平面図・配置図・家具レイアウトに人を入れるための、平面作図の人物40点です。デスクや食卓に着席した人、立っている人、少人数で話している集まり、そして 1/100 でも肩のラインが判別できる歩行者を収録しています。\n\n各図形は閉じたポリラインなので、下に敷いたハッチやポシェが汚れません。肩幅は1つのテンプレートの使い回しではなく実測寸法に沿わせているため、人が密集した平面でもスタンプを押したような見え方になりません。DWG、DXF、レイヤー付き AI、背景透過 PNG を同梱。"
   },
   "category": "people",
-  "views": ["plan"],
-  "formats": ["dwg", "dxf", "ai", "png"],
+  "views": [
+    "plan"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "png"
+  ],
   "itemCount": 40,
   "fileSize": "8.1 MB",
-  "price": { "amount": 900, "currency": "JPY" },
+  "price": {
+    "amount": 900,
+    "currency": "JPY"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/people-plan-vol-01/people-plan-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/people-plan-vol-01/people-plan-vol-01-ai.zip"
+    }
+  ],
   "checkoutUrl": null,
   "lemonVariantId": null,
   "thumbnail": "/products/people-plan-vol-01/thumb.svg",
@@ -26,7 +46,11 @@
     "/products/people-plan-vol-01/02.svg",
     "/products/people-plan-vol-01/03.svg"
   ],
-  "tags": ["scale figure", "human", "plan"],
+  "tags": [
+    "scale figure",
+    "human",
+    "plan"
+  ],
   "featured": true,
   "publishedAt": "2026-08-10"
 }

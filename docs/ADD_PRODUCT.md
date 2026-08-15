@@ -1,7 +1,8 @@
 # 商品を1点追加する
 
-1商品 = `content/products/<slug>.json` 1ファイル + `public/products/<slug>/` の画像。
-この2つを足して push すれば、Cloudflare が自動でデプロイして商品ページが生える。
+1商品 = `content/products/<slug>.json` 1ファイル + `public/products/<slug>/` の画像
++ `public/downloads/<slug>/` の zip。この3つを足して push すれば、Cloudflare が
+自動でデプロイして商品ページが生える。
 
 ---
 
@@ -48,14 +49,32 @@ JSON の `gallery` 配列も合わせて直すこと（存在しない画像を�
 - 1段落目 — 何が何点入っているか、どんな図面で使うものか
 - 2段落目 — 寸法の根拠、レイヤー構成、収録形式の内訳
 
-### 4. Lemon Squeezy に商品を作る
+### 4. 配布する zip を置く
 
-1. LS 管理画面 → Products → New Product
-2. zip をアップロード（**zip はこのリポジトリに入れない**）
-3. 価格を JSON の `price` と同じ額・同じ通貨で設定する
-4. 発行されたチェックアウト URL を JSON の `checkoutUrl` に貼る
+`public/downloads/<slug>/` に置く。ファイル名は JSON の `downloads[].file` と揃える。
 
-`checkoutUrl` が `null` のあいだ、商品ページの購入ボタンは「販売準備中」と表示される。
+```
+public/downloads/<slug>/<slug>-dwg.zip
+public/downloads/<slug>/<slug>-ai.zip
+```
+
+形式を増減したいときは JSON の `downloads` を直す（`format` は taxonomy の
+フォーマット ID から選ぶ）。**表示されるファイルサイズは実ファイルから自動算出される**ので、
+JSON に書く必要はない。zip を差し替えれば表示も追従する。
+
+> `.gitignore` は `*.zip` を無視しているが、`public/downloads/` 配下だけ例外にしてある。
+
+#### Lemon Squeezy の審査が通ったら
+
+サイトからの直接配布をやめて、LS の購入導線に切り替える。
+
+1. LS 管理画面 → Products → New Product、zip をアップロード
+2. 価格を JSON の `price` と同じ額・同じ通貨で設定
+3. 発行されたチェックアウト URL を JSON の `checkoutUrl` に貼る
+4. JSON の `downloads` を `[]` にして、`public/downloads/<slug>/` を削除
+
+`checkoutUrl` は `downloads` より優先されるので、3 を入れた時点で購入ボタンに切り替わる。
+4 は配布ファイルをリポジトリから消すための後片付け。
 
 ### 5. 検査する
 
@@ -77,7 +96,7 @@ npm run dev
 ```
 
 - `/ja/products` — 一覧に出るか、カードの要約が2行に収まっているか
-- `/ja/products/<slug>` — ギャラリー、仕様表、購入ボタン
+- `/ja/products/<slug>` — ギャラリー、仕様表、**ダウンロードボタンを実際に押して zip が落ちるか**
 - `/en/products/<slug>` — 英語側も同様に
 
 ### 7. push する

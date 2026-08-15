@@ -120,6 +120,10 @@ export const ja: Dictionary = {
     licenseLink: 'ライセンス全文を読む',
     checkoutPending: '販売準備中',
     checkoutPendingNote: 'このセットはまだ販売を開始していません。公開までしばらくお待ちください。',
+
+    downloadHeading: 'ダウンロード',
+    downloadNote:
+      'ストア準備中のため、現在はこのサイトから直接配布しています。正式公開後は Lemon Squeezy でのご購入後にダウンロードいただく形になります。いずれの場合もこのページのライセンスが適用されます。',
   },
 
   about: {

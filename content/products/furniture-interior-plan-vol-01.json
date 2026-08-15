@@ -13,11 +13,31 @@
     "ja": "住宅・小規模オフィスの平面図のための家具ブロック60点。ソファとアームチェア、ダイニング／会議テーブル、シングル・ダブルのベッド、クローゼットと棚、さらにキッチン設備と衛生器具を収録しています。寸法は汎用的な長方形ではなく、実際に流通しているカタログ寸法に合わせているので、この図面のまま家具を発注しても納まります。\n\n各ブロックは角または中心の適切な位置に挿入基準点を持ち、扉・引き出し・椅子の引き代のクリアランス線は別レイヤーに分けてあるので、出図前に非表示にできます。DWG、DXF、レイヤー付き AI、全点を一覧できる印刷用 PDF を同梱。"
   },
   "category": "furniture",
-  "views": ["plan"],
-  "formats": ["dwg", "dxf", "ai", "pdf"],
+  "views": [
+    "plan"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "pdf"
+  ],
   "itemCount": 60,
   "fileSize": "6.2 MB",
-  "price": { "amount": 1600, "currency": "JPY" },
+  "price": {
+    "amount": 1600,
+    "currency": "JPY"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/furniture-interior-plan-vol-01/furniture-interior-plan-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/furniture-interior-plan-vol-01/furniture-interior-plan-vol-01-ai.zip"
+    }
+  ],
   "checkoutUrl": null,
   "lemonVariantId": null,
   "thumbnail": "/products/furniture-interior-plan-vol-01/thumb.svg",
@@ -26,7 +46,11 @@
     "/products/furniture-interior-plan-vol-01/02.svg",
     "/products/furniture-interior-plan-vol-01/03.svg"
   ],
-  "tags": ["furniture", "interior", "plan"],
+  "tags": [
+    "furniture",
+    "interior",
+    "plan"
+  ],
   "featured": true,
   "publishedAt": "2026-08-05"
 }

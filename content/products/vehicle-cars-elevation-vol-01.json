@@ -13,11 +13,32 @@
     "ja": "16台の車両を立面と平面の両方で作図し、2つの視点を対応させています。同じ車を、街路の立面図にも、同じプロジェクトの駐車場レイアウトにも使えます。軽自動車、コンパクトハッチバック、セダン、SUV、配送用バンまでを収録。\n\n各車両は公表されている全長・全幅・全高で作図しているため、平面図はプレゼン用途だけでなく、駐車マスの寸法確認や転回スペースの検討にも使えます。窓・ホイール・車体の輪郭はそれぞれ別レイヤーです。DWG、DXF、レイヤー付き AI、背景透過 PNG を同梱。"
   },
   "category": "vehicle",
-  "views": ["elevation", "plan"],
-  "formats": ["dwg", "dxf", "ai", "png"],
+  "views": [
+    "elevation",
+    "plan"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "png"
+  ],
   "itemCount": 16,
   "fileSize": "11.3 MB",
-  "price": { "amount": 1200, "currency": "JPY" },
+  "price": {
+    "amount": 1200,
+    "currency": "JPY"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/vehicle-cars-elevation-vol-01/vehicle-cars-elevation-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/vehicle-cars-elevation-vol-01/vehicle-cars-elevation-vol-01-ai.zip"
+    }
+  ],
   "checkoutUrl": null,
   "lemonVariantId": null,
   "thumbnail": "/products/vehicle-cars-elevation-vol-01/thumb.svg",
@@ -26,7 +47,11 @@
     "/products/vehicle-cars-elevation-vol-01/02.svg",
     "/products/vehicle-cars-elevation-vol-01/03.svg"
   ],
-  "tags": ["car", "parking", "street"],
+  "tags": [
+    "car",
+    "parking",
+    "street"
+  ],
   "featured": false,
   "publishedAt": "2026-08-02"
 }

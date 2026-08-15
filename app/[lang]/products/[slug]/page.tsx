@@ -13,7 +13,7 @@ import {
 } from '@/content/taxonomy';
 import { getDict, href } from '@/lib/i18n';
 import { resolvePrice } from '@/lib/pricing';
-import { getAllProducts, getProduct, getRelated } from '@/lib/products';
+import { getAllProducts, getDownloadSize, getProduct, getRelated } from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
 import styles from './product.module.css';
 
@@ -100,7 +100,16 @@ export default async function ProductPage(props: { params: Promise<Params> }) {
           <p className={styles.summary}>{product.summary[lang]}</p>
 
           <div className={styles.buy}>
-            <BuyButton checkoutUrl={product.checkoutUrl} price={price.formatted} dict={dict} />
+            <BuyButton
+              checkoutUrl={product.checkoutUrl}
+              downloads={product.downloads.map((d) => ({
+                ...d,
+                size: getDownloadSize(d.file),
+              }))}
+              price={price.formatted}
+              dict={dict}
+              lang={lang}
+            />
           </div>
 
           <section className={styles.specs}>

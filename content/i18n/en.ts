@@ -129,6 +129,10 @@ export const en = {
     licenseLink: 'Read the full license',
     checkoutPending: 'Checkout link coming soon',
     checkoutPendingNote: 'This set is not on sale yet. Please check back shortly.',
+
+    downloadHeading: 'Download',
+    downloadNote:
+      'The store is still being set up, so files are served directly from this site for now. Once it opens, downloads will be delivered by Lemon Squeezy after checkout. The license on this page applies either way.',
   },
 
   about: {

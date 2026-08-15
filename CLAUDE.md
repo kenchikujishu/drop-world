@@ -8,8 +8,13 @@ CAD 添景データ（人物・植栽・家具・車両など）を販売する�
 **LS のストア審査を通すためのサイト。** 審査通過後に LS の API から価格を自動取得する構成へ移行する。
 移行の差し替え点は `lib/pricing.ts` の `resolvePrice()` 1関数に閉じてある。
 
-商品は6点入っているが、いずれも **仮データ + プレースホルダー画像**（`PREVIEW PENDING` の文字入り）。
-審査に出す前に実データへ差し替えること。→ `docs/LEMON_SETUP.md`
+**ファイル配信も審査が通るまでは暫定運用。** いまは `public/downloads/<slug>/` に置いた zip を
+サイトから直接配らせている（商品ページに DWG / AI のダウンロードボタンが出る）。
+審査通過後は商品 JSON に `checkoutUrl` を入れれば購入ボタンに切り替わる
+（`checkoutUrl` が `downloads` より優先される）。
+
+商品は6点入っているが、いずれも **仮データ + プレースホルダー画像**（`PREVIEW PENDING` の文字入り）
+**+ 中身が README だけのダミー zip**。審査に出す前に実データへ差し替えること。→ `docs/LEMON_SETUP.md`
 
 ## 技術構成
 
@@ -71,8 +76,9 @@ npm run new:product
 
 → 手順の詳細は `docs/ADD_PRODUCT.md`
 
-**zip はリポジトリに入れない**（`.gitignore` で弾いている）。ファイル配信は LS のストレージが担う。
-Git に入れるのはサムネイル画像（`public/products/<slug>/`）だけ。
+Git に入れるのはサムネイル画像（`public/products/<slug>/`）と、
+配布用 zip（`public/downloads/<slug>/`）。zip は `.gitignore` で `*.zip` を無視しつつ
+`public/downloads/` 配下だけ例外にしてある。**審査通過後は LS のストレージに移し、ここは空にする。**
 
 ## ローカル開発
 
@@ -110,5 +116,14 @@ npm run deploy              # 手元から直接デプロイ
 
 - `content/tokushoho.ts` の `value: ''` の項目（販売業者 / 運営責任者 / 所在地 / 電話番号）が空。
   サイト上は赤い「（記載準備中）」として表示される。**国内向け販売の前に埋めること**
-- 全商品の `checkoutUrl` が `null`（サイト上は「販売準備中」）。LS 側で商品を作ってから貼る
+- 全商品の `checkoutUrl` が `null`。いまは `downloads` による直接配布で動いている
 - 商品のサムネイルがプレースホルダー SVG（`scripts/generate-placeholders.mjs` 生成）
+- `public/downloads/` の zip は中身が README だけのダミー
+
+### デモ URL
+
+`npx wrangler deploy --temporary` で払い出した一時 URL:
+https://drop-world.honorable-jitterbug.workers.dev
+
+**一時アカウントなので期限がある。** 本番は Workers Builds を繋いで
+`drop-world.com` に載せる。→ `docs/DEPLOY.md`

@@ -22,8 +22,9 @@ Lemon Squeezy（以下 LS）は新規ストアを人力でレビューする。�
 
 - [ ] **実データへの差し替え** — 商品6点はいずれも仮データ。サムネイルには `PREVIEW PENDING` と入っている。
       架空の商品のまま審査に出すと落ちる
-- [ ] **`checkoutUrl`** — 全商品 `null`。サイト上は「販売準備中」と出るので、
-      この状態が並んでいると "coming soon サイト" と判断されうる。**LS 側で商品を作って URL を貼ること**
+- [ ] **`checkoutUrl`** — 全商品 `null`。いまは代わりに `downloads`（サイトからの直接配布）で
+      動いている。**審査に出す前に LS 側で商品を作り、URL を貼って購入導線に切り替えること。**
+      無料でダウンロードできる状態のまま審査に出すと、何を売る店なのか判断できない
 - [ ] **サポート用メールアドレス** — `support@drop-world.com` で**実際に受信できる状態にする**。
       Cloudflare の Email Routing で Gmail 等へ転送するのが手軽（→ `docs/DEPLOY.md`）
 - [ ] **独自ドメインの接続** — `drop-world.com` を Cloudflare Workers に繋ぐ（→ `docs/DEPLOY.md`）。

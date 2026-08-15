@@ -13,11 +13,31 @@
     "ja": "立面図・断面図のための汎用的な人物セットです。立つ・歩く・待つ・二人で話す、といった24点を、線の太さを揃えて作図しています。この1セットから配置すれば、ファサードに人を入れてもコラージュにならず、1枚の図面として読めます。\n\n身長は 1,550〜1,850mm、ミリ単位のモデル空間 1:1 で作図。輪郭・塗り・ディテールを3つの名前付きレイヤーに分けているので、塗りを消して線だけの立面にしたり、小さい縮尺の出力時にディテールだけ落としたりできます。DWG は AutoCAD 2013 形式、旧バージョンや Autodesk 以外のソフト向けに DXF を同梱。ほかにレイヤー付き AI と、高さ 2,000px の背景透過 PNG が入っています。"
   },
   "category": "people",
-  "views": ["elevation"],
-  "formats": ["dwg", "dxf", "ai", "png"],
+  "views": [
+    "elevation"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "png"
+  ],
   "itemCount": 24,
   "fileSize": "12.4 MB",
-  "price": { "amount": 1200, "currency": "JPY" },
+  "price": {
+    "amount": 1200,
+    "currency": "JPY"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/people-elevation-vol-01/people-elevation-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/people-elevation-vol-01/people-elevation-vol-01-ai.zip"
+    }
+  ],
   "checkoutUrl": null,
   "lemonVariantId": null,
   "thumbnail": "/products/people-elevation-vol-01/thumb.svg",
@@ -26,7 +46,11 @@
     "/products/people-elevation-vol-01/02.svg",
     "/products/people-elevation-vol-01/03.svg"
   ],
-  "tags": ["scale figure", "human", "elevation"],
+  "tags": [
+    "scale figure",
+    "human",
+    "elevation"
+  ],
   "featured": true,
   "publishedAt": "2026-08-12"
 }

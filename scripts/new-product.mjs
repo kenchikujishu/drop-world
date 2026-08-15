@@ -114,6 +114,11 @@ const product = {
   itemCount,
   fileSize,
   price: { amount, currency: currency.toUpperCase() },
+  // サイトから直接配布する zip。LS の審査が通ったら空にして checkoutUrl を入れる。
+  downloads: [
+    { format: 'dwg', file: `/downloads/${slug}/${slug}-dwg.zip` },
+    { format: 'ai', file: `/downloads/${slug}/${slug}-ai.zip` },
+  ],
   checkoutUrl: checkoutUrl || null,
   lemonVariantId: null,
   thumbnail: `/products/${slug}/thumb.webp`,
@@ -128,6 +133,9 @@ fs.writeFileSync(jsonPath, `${JSON.stringify(product, null, 2)}\n`);
 const imageDir = path.join(process.cwd(), 'public', 'products', slug);
 fs.mkdirSync(imageDir, { recursive: true });
 
+const downloadDir = path.join(process.cwd(), 'public', 'downloads', slug);
+fs.mkdirSync(downloadDir, { recursive: true });
+
 // 索引を作り直しておかないと、この商品が npm run dev に出てこない。
 writeProductsIndex();
 
@@ -137,16 +145,21 @@ console.log(`
 ✓ 作成しました
 
   content/products/${slug}.json
-  public/products/${slug}/          ← ここに画像を置く
+  public/products/${slug}/          ← サムネイル画像を置く
+  public/downloads/${slug}/         ← 配布する zip を置く
 
 次にやること:
   1. public/products/${slug}/ に thumb.webp、01.webp、02.webp を置く
      （枚数を変える場合は JSON の gallery も合わせて直す）
-  2. JSON の description（en / ja）を書く
-  3. Lemon Squeezy に商品を作って zip をアップし、checkoutUrl を JSON に貼る
+  2. public/downloads/${slug}/ に ${slug}-dwg.zip と ${slug}-ai.zip を置く
+     （形式を変える場合は JSON の downloads も合わせて直す）
+  3. JSON の description（en / ja）を書く
   4. npm run validate:products
   5. npm run dev で見た目を確認
   6. git add . && git commit && git push  → Cloudflare が自動デプロイ
+
+  ※ Lemon Squeezy の審査が通ったら、downloads を空にして checkoutUrl を入れる。
+     それだけでダウンロードボタンが購入ボタンに切り替わります。
 
   手順の詳細は docs/ADD_PRODUCT.md に書いてあります。
 `);

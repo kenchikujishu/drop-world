@@ -1,5 +1,27 @@
 # 作業ログ
 
+## 2026-08-15 — サイトからの直接ダウンロードを実装、デモ公開
+
+Lemon Squeezy の審査が通るまでは LS のファイル配信が使えないので、
+**サイトから直接 zip を配る暫定モード**を入れた。
+
+- 商品 JSON に `downloads`（`{ format, file }` の配列）を追加。
+  `public/downloads/<slug>/` に置いた zip を指す
+- 商品ページに DWG / AI のダウンロードボタンを表示。押すと zip が落ちる
+- 表示するファイルサイズは **実ファイルから自動算出**（`content/products-index.ts` に埋め込む）。
+  JSON に手で書くと zip 差し替え時に必ずズレるため
+- 表示の優先順位は `checkoutUrl` > `downloads` > 販売準備中。
+  **審査通過後は JSON に checkoutUrl を入れるだけで購入ボタンに切り替わる**
+- `.gitignore` の `*.zip` に `public/downloads/` の例外を追加
+
+デモを `npx wrangler deploy --temporary` で公開:
+https://drop-world.honorable-jitterbug.workers.dev
+（Cloudflare の一時アカウントなので期限あり。本番は Workers Builds + drop-world.com）
+
+商品6点の zip は中身が README だけのダミー。実データが届いたら差し替える。
+
+---
+
 ## 2026-08-15 — ホスティングを Cloudflare Workers に変更
 
 ドメインを Cloudflare で取得済みだったため、Vercel をやめて Cloudflare に一本化した。

@@ -23,6 +23,33 @@ function toIdentifier(slug) {
   return slug.replace(/-([a-z0-9])/g, (_, char) => char.toUpperCase());
 }
 
+function humanSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(kb < 10 ? 1 : 0)} KB`;
+  return `${(kb / 1024).toFixed(1)} MB`;
+}
+
+/**
+ * 配布ファイルのサイズを実ファイルから拾う。
+ * JSON に手で書くと zip を差し替えたときに必ずズレるので、ここで自動算出する。
+ */
+function collectDownloadSizes(files) {
+  const sizes = {};
+
+  for (const file of files) {
+    const product = JSON.parse(fs.readFileSync(path.join(PRODUCTS_DIR, file), 'utf-8'));
+    for (const download of product.downloads ?? []) {
+      const abs = path.join(process.cwd(), 'public', download.file);
+      if (fs.existsSync(abs)) {
+        sizes[download.file] = humanSize(fs.statSync(abs).size);
+      }
+    }
+  }
+
+  return sizes;
+}
+
 export function writeProductsIndex() {
   const files = fs.existsSync(PRODUCTS_DIR)
     ? fs.readdirSync(PRODUCTS_DIR).filter((file) => file.endsWith('.json')).sort()
@@ -39,6 +66,11 @@ export function writeProductsIndex() {
     )
     .join('\n');
 
+  const sizes = collectDownloadSizes(files);
+  const sizeEntries = Object.entries(sizes)
+    .map(([file, size]) => `  '${file}': '${size}',`)
+    .join('\n');
+
   const contents = `/* eslint-disable */
 // ⚠ このファイルは自動生成です。直接編集しないでください。
 // 生成元: scripts/write-products-index.mjs
@@ -52,6 +84,11 @@ ${imports}
 export const RAW_PRODUCTS: { file: string; data: unknown }[] = [
 ${entries}
 ];
+
+/** 配布 zip のサイズ。実ファイルから自動算出しているので手で直さないこと。 */
+export const DOWNLOAD_SIZES: Record<string, string> = {
+${sizeEntries}
+};
 `;
 
   const previous = fs.existsSync(OUT_FILE) ? fs.readFileSync(OUT_FILE, 'utf-8') : '';

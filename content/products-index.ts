@@ -21,3 +21,19 @@ export const RAW_PRODUCTS: { file: string; data: unknown }[] = [
   { file: 'vegetation-trees-elevation-vol-01.json', data: vegetationTreesElevationVol01 },
   { file: 'vehicle-cars-elevation-vol-01.json', data: vehicleCarsElevationVol01 },
 ];
+
+/** 配布 zip のサイズ。実ファイルから自動算出しているので手で直さないこと。 */
+export const DOWNLOAD_SIZES: Record<string, string> = {
+  '/downloads/animal-companions-elevation-vol-01/animal-companions-elevation-vol-01-dwg.zip': '638 B',
+  '/downloads/animal-companions-elevation-vol-01/animal-companions-elevation-vol-01-ai.zip': '636 B',
+  '/downloads/furniture-interior-plan-vol-01/furniture-interior-plan-vol-01-dwg.zip': '637 B',
+  '/downloads/furniture-interior-plan-vol-01/furniture-interior-plan-vol-01-ai.zip': '635 B',
+  '/downloads/people-elevation-vol-01/people-elevation-vol-01-dwg.zip': '630 B',
+  '/downloads/people-elevation-vol-01/people-elevation-vol-01-ai.zip': '628 B',
+  '/downloads/people-plan-vol-01/people-plan-vol-01-dwg.zip': '628 B',
+  '/downloads/people-plan-vol-01/people-plan-vol-01-ai.zip': '626 B',
+  '/downloads/vegetation-trees-elevation-vol-01/vegetation-trees-elevation-vol-01-dwg.zip': '635 B',
+  '/downloads/vegetation-trees-elevation-vol-01/vegetation-trees-elevation-vol-01-ai.zip': '633 B',
+  '/downloads/vehicle-cars-elevation-vol-01/vehicle-cars-elevation-vol-01-dwg.zip': '635 B',
+  '/downloads/vehicle-cars-elevation-vol-01/vehicle-cars-elevation-vol-01-ai.zip': '633 B',
+};

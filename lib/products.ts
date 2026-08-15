@@ -1,4 +1,4 @@
-import { RAW_PRODUCTS } from '@/content/products-index';
+import { DOWNLOAD_SIZES, RAW_PRODUCTS } from '@/content/products-index';
 import { productSchema, type Product } from './product-schema';
 import type { CategoryId } from '@/content/taxonomy';
 
@@ -73,6 +73,11 @@ export function getCategoryCounts(): Record<string, number> {
 
 function sortByNewest(products: Product[]): Product[] {
   return [...products].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+}
+
+/** 配布 zip の表示サイズ。実ファイルから自動算出した値を引く。 */
+export function getDownloadSize(file: string): string | undefined {
+  return DOWNLOAD_SIZES[file];
 }
 
 export type { Product };

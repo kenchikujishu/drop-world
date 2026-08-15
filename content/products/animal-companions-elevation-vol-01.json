@@ -13,11 +13,31 @@
     "ja": "住宅の立面図、公園や街並みの図面のための動物12点。小型・中型・大型それぞれの犬を立位・歩行・座位で、猫を立位・座位・丸まった姿勢で作図しています。\n\n体高は猫の 250mm から大型犬の 700mm まで。当店の人物・家具セットと並べても大きさが正しく見えます。線の太さは「人物 立面 Vol.01」と揃えてあるので、2つのセットを同じ立面図に混ぜても調整は不要です。DWG、DXF、レイヤー付き AI、背景透過 PNG を同梱。"
   },
   "category": "animal",
-  "views": ["elevation"],
-  "formats": ["dwg", "dxf", "ai", "png"],
+  "views": [
+    "elevation"
+  ],
+  "formats": [
+    "dwg",
+    "dxf",
+    "ai",
+    "png"
+  ],
   "itemCount": 12,
   "fileSize": "5.4 MB",
-  "price": { "amount": 800, "currency": "JPY" },
+  "price": {
+    "amount": 800,
+    "currency": "JPY"
+  },
+  "downloads": [
+    {
+      "format": "dwg",
+      "file": "/downloads/animal-companions-elevation-vol-01/animal-companions-elevation-vol-01-dwg.zip"
+    },
+    {
+      "format": "ai",
+      "file": "/downloads/animal-companions-elevation-vol-01/animal-companions-elevation-vol-01-ai.zip"
+    }
+  ],
   "checkoutUrl": null,
   "lemonVariantId": null,
   "thumbnail": "/products/animal-companions-elevation-vol-01/thumb.svg",
@@ -26,7 +46,11 @@
     "/products/animal-companions-elevation-vol-01/02.svg",
     "/products/animal-companions-elevation-vol-01/03.svg"
   ],
-  "tags": ["dog", "cat", "pet"],
+  "tags": [
+    "dog",
+    "cat",
+    "pet"
+  ],
   "featured": false,
   "publishedAt": "2026-07-30"
 }

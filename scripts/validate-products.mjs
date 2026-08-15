@@ -117,6 +117,26 @@ for (const file of files) {
     fail(file, 'lemonVariantId は文字列か null である必要があります。');
   }
 
+  if (product.downloads !== undefined) {
+    if (!Array.isArray(product.downloads)) {
+      fail(file, 'downloads は配列である必要があります。');
+    } else {
+      product.downloads.forEach((download, index) => {
+        if (!FORMAT_IDS.includes(download?.format)) {
+          fail(
+            file,
+            `downloads[${index}].format "${download?.format}" は未定義です。使える値: ${FORMAT_IDS.join(', ')}`,
+          );
+        }
+        if (typeof download?.file !== 'string' || !download.file.startsWith('/downloads/')) {
+          fail(file, `downloads[${index}].file は "/downloads/" で始まるパスである必要があります。`);
+        } else if (!fs.existsSync(path.join(PUBLIC_DIR, download.file))) {
+          fail(file, `downloads[${index}].file が見つかりません → public${download.file}`);
+        }
+      });
+    }
+  }
+
   checkImage(file, 'thumbnail', product.thumbnail);
   if (!Array.isArray(product.gallery) || product.gallery.length === 0) {
     fail(file, 'gallery は最低1枚必要です。');
@@ -136,10 +156,11 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-/* 販売可能かどうかは警告に留める（LS 側に商品を作る前は checkoutUrl が null のため）。 */
+/* 購入導線が無い商品は警告に留める（LS 側に商品を作る前は checkoutUrl が null のため）。
+   downloads があればサイトから直接配布するので、警告の対象外。 */
 const pending = files.filter((file) => {
   const product = JSON.parse(fs.readFileSync(path.join(PRODUCTS_DIR, file), 'utf-8'));
-  return product.checkoutUrl === null;
+  return !product.checkoutUrl && (product.downloads ?? []).length === 0;
 });
 
 /* 検証を通ったら索引ファイルを作り直す（Workers 用にJSONをバンドルへ埋め込むため）。 */
@@ -151,9 +172,9 @@ if (index.written) {
 }
 if (pending.length > 0) {
   console.log(
-    `\n⚠ うち ${pending.length} 点は checkoutUrl が未設定です（サイト上は「販売準備中」と表示されます）:`,
+    `\n⚠ うち ${pending.length} 点は checkoutUrl も downloads も無く、購入導線がありません` +
+      '（サイト上は「販売準備中」と表示されます）:',
   );
   for (const file of pending) console.log(`  - ${file}`);
-  console.log('\n  Lemon Squeezy の審査に出す前に、LS 側で商品を作成して URL を入れてください。');
-  console.log('  詳しくは docs/LEMON_SETUP.md を参照。');
+  console.log('\n  詳しくは docs/LEMON_SETUP.md を参照。');
 }

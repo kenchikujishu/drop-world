@@ -39,8 +39,25 @@ export const productSchema = z.object({
   }),
 
   /**
+   * サイトから直接配布するファイル。`public/downloads/<slug>/` に置いた zip を指す。
+   *
+   * Lemon Squeezy の審査が通るまでの暫定運用。審査通過後は LS がファイル配信を担うので、
+   * この配列を空にして checkoutUrl を入れれば購入ボタンに切り替わる。
+   * サイズは自動算出するので JSON には書かない（content/products-index.ts が実ファイルから拾う）。
+   */
+  downloads: z
+    .array(
+      z.object({
+        format: z.enum(FORMAT_IDS),
+        file: z.string().startsWith('/downloads/'),
+      }),
+    )
+    .default([]),
+
+  /**
    * Lemon Squeezy のチェックアウト URL。
-   * 商品を LS 側で作る前は null にしておく（サイトは「販売準備中」と表示する）。
+   * 商品を LS 側で作る前は null にしておく。
+   * ここが埋まると、ダウンロードボタンより優先して購入ボタンが出る。
    */
   checkoutUrl: z.string().url().nullable(),
 
