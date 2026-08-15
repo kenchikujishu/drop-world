@@ -13,6 +13,14 @@
     "binding": "ASSETS"
   },
 
+  // カスタムドメイン。DNS レコードと証明書は deploy 時に自動で用意される
+  // （drop-world.com のゾーンが同じ Cloudflare アカウントにあること）。
+  // www は middleware.ts が apex へ 301 で寄せる。
+  "routes": [
+    { "pattern": "drop-world.com", "custom_domain": true },
+    { "pattern": "www.drop-world.com", "custom_domain": true }
+  ],
+
   "observability": {
     "enabled": true
   }

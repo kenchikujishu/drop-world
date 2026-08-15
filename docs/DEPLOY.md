@@ -24,11 +24,24 @@ npm run preview    # http://localhost:8787 … 本番と同じ Worker をロー�
 
 ## 手元から直接デプロイする
 
+初回だけ Cloudflare にログインする。**`drop-world.com` を持っているアカウント**を選ぶこと。
+
+```bash
+npx wrangler login
+```
+
+あとはこれだけ。
+
 ```bash
 npm run deploy
 ```
 
-初回は `wrangler` がブラウザを開いて Cloudflare アカウントの認証を求める。
+`wrangler.jsonc` にカスタムドメインを書いてあるので、**deploy すると
+`drop-world.com` と `www.drop-world.com` の DNS レコードと証明書が自動で作られる。**
+ダッシュボードでの操作は要らない。
+
+> `npx wrangler deploy --temporary` はログイン不要で動くが、**使い捨ての一時アカウント**に
+> 出るだけで、URL は短時間で消えるしカスタムドメインも当たらない。動作確認以外に使わない。
 
 ---
 
@@ -64,18 +77,23 @@ push するたびに自動でビルド・デプロイされるようにする。
 
 ---
 
-## ドメインを繋ぐ
+## ドメインについて
 
-Worker → **Settings** → **Domains & Routes** → **Add** → **Custom domain** で追加する。
+`wrangler.jsonc` の `routes` に書いてあるので、**deploy すれば自動で繋がる。**
+DNS レコードを手で作る必要も、ダッシュボードで Custom domain を追加する必要もない。
 
-- `drop-world.com`
-- `www.drop-world.com`
-
-**DNS レコードを手で作る必要はない。** 同じ Cloudflare アカウントにゾーンがあるので、
-Custom domain を追加した時点で必要なレコードと証明書が自動で用意される。
+```jsonc
+"routes": [
+  { "pattern": "drop-world.com", "custom_domain": true },
+  { "pattern": "www.drop-world.com", "custom_domain": true }
+]
+```
 
 `www` に来たアクセスは `middleware.ts` が apex へ 301 リダイレクトするので、
 Cloudflare 側でリダイレクトルールを作る必要もない。
+
+うまく当たらない場合は、Cloudflare にログインしているアカウントが
+`drop-world.com` のゾーンを持っているか確認する（別アカウントだと権限エラーになる）。
 
 ---
 
