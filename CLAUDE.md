@@ -120,10 +120,12 @@ npm run deploy              # 手元から直接デプロイ
 - 商品のサムネイルがプレースホルダー SVG（`scripts/generate-placeholders.mjs` 生成）
 - `public/downloads/` の zip は中身が README だけのダミー
 
-### デモ URL
+### 公開 URL
 
-`npx wrangler deploy --temporary` で払い出した一時 URL:
-https://drop-world.honorable-jitterbug.workers.dev
+**https://drop-world.com**（Cloudflare Workers / アカウント: kenchikujishu@gmail.com）
 
-**一時アカウントなので期限がある。** 本番は Workers Builds を繋いで
-`drop-world.com` に載せる。→ `docs/DEPLOY.md`
+`npm run deploy` で更新できる。カスタムドメインは `wrangler.jsonc` の `routes` に
+書いてあるので、DNS の手作業は不要。
+
+> `npx wrangler deploy --temporary` は使い捨ての一時アカウントに出るだけで
+> URL がすぐ消える。動作確認以外に使わないこと。

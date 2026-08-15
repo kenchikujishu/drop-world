@@ -1,5 +1,19 @@
 # 作業ログ
 
+## 2026-08-15 — drop-world.com で公開
+
+`wrangler login`（kenchikujishu@gmail.com）のうえで `npm run deploy`。
+`wrangler.jsonc` の `routes` に custom_domain を書いてあるので、DNS レコードと
+証明書も deploy 時に自動で用意された。ダッシュボードでの操作なし。
+
+確認: 全ルート 200、`/` の言語振り分け 307、`www` → apex 301、商品6点表示、
+zip ダウンロード可、sitemap が実ドメイン、HTTP/2 + TLS。
+
+> 補足: 先に `--temporary` で出した URL は使い捨ての一時アカウントに載るもので、
+> 短時間で消えた。動作確認以外には使わないこと。
+
+---
+
 ## 2026-08-15 — サイトからの直接ダウンロードを実装、デモ公開
 
 Lemon Squeezy の審査が通るまでは LS のファイル配信が使えないので、
