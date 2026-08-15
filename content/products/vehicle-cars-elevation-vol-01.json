@@ -1,0 +1,32 @@
+{
+  "slug": "vehicle-cars-elevation-vol-01",
+  "title": {
+    "en": "Cars — Elevation & Plan Vol.01",
+    "ja": "乗用車 立面・平面 Vol.01"
+  },
+  "summary": {
+    "en": "16 passenger cars in matched elevation and plan, including kei cars, hatchbacks, SUVs and a van.",
+    "ja": "乗用車16点を立面と平面のセットで収録。軽自動車、ハッチバック、SUV、バンまで。"
+  },
+  "description": {
+    "en": "Sixteen vehicles drawn in both elevation and plan, with the two views matched so the same car can appear on a street elevation and in the parking layout of the same project. The set spans Japanese kei cars, compact hatchbacks, saloons, SUVs and a delivery van.\n\nEvery vehicle is drawn at its published overall dimensions, which makes the plan views usable for checking parking bay sizes and turning clearances rather than only for presentation. Windows, wheels and body outline are on separate layers. Includes DWG, DXF, layered AI and transparent PNGs.",
+    "ja": "16台の車両を立面と平面の両方で作図し、2つの視点を対応させています。同じ車を、街路の立面図にも、同じプロジェクトの駐車場レイアウトにも使えます。軽自動車、コンパクトハッチバック、セダン、SUV、配送用バンまでを収録。\n\n各車両は公表されている全長・全幅・全高で作図しているため、平面図はプレゼン用途だけでなく、駐車マスの寸法確認や転回スペースの検討にも使えます。窓・ホイール・車体の輪郭はそれぞれ別レイヤーです。DWG、DXF、レイヤー付き AI、背景透過 PNG を同梱。"
+  },
+  "category": "vehicle",
+  "views": ["elevation", "plan"],
+  "formats": ["dwg", "dxf", "ai", "png"],
+  "itemCount": 16,
+  "fileSize": "11.3 MB",
+  "price": { "amount": 1200, "currency": "JPY" },
+  "checkoutUrl": null,
+  "lemonVariantId": null,
+  "thumbnail": "/products/vehicle-cars-elevation-vol-01/thumb.svg",
+  "gallery": [
+    "/products/vehicle-cars-elevation-vol-01/01.svg",
+    "/products/vehicle-cars-elevation-vol-01/02.svg",
+    "/products/vehicle-cars-elevation-vol-01/03.svg"
+  ],
+  "tags": ["car", "parking", "street"],
+  "featured": false,
+  "publishedAt": "2026-08-02"
+}

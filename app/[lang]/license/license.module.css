@@ -1,0 +1,92 @@
+.tableSection {
+  padding-block: 3rem 0;
+}
+
+.tableTitle {
+  font-size: var(--step-2);
+  margin-bottom: 1.25rem;
+}
+
+.table {
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.8125rem 1.125rem;
+}
+
+.row:nth-child(odd) {
+  background: var(--paper-2);
+}
+
+.use {
+  font-size: var(--step-0);
+  color: var(--ink-70);
+}
+
+/* ✓ / × のマーク */
+
+.markOk,
+.markNg {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.markOk::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border-right: 1.5px solid var(--ok);
+  border-bottom: 1.5px solid var(--ok);
+  transform: rotate(42deg);
+}
+
+.markNg::before,
+.markNg::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 12px;
+  height: 1.5px;
+  background: var(--ng);
+}
+
+.markNg::before {
+  transform: rotate(45deg);
+}
+
+.markNg::after {
+  transform: rotate(-45deg);
+}
+
+.labelOk {
+  color: var(--ok);
+}
+
+.labelNg {
+  color: var(--ng);
+}
+
+@media (max-width: 560px) {
+  .row {
+    grid-template-columns: 18px 1fr;
+    row-gap: 0.25rem;
+  }
+
+  .labelOk,
+  .labelNg {
+    grid-column: 2;
+  }
+}

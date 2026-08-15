@@ -1,0 +1,147 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.mainRow {
+  border-bottom: 1px solid var(--line);
+}
+
+.mainRowInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 64px;
+}
+
+/* ---- ワードマーク ---- */
+
+.wordmark {
+  position: relative;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  padding-right: 0.5rem;
+}
+
+.wordmarkDot {
+  position: absolute;
+  right: 0;
+  bottom: 0.42em;
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* ---- デスクトップナビ ---- */
+
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  margin-left: auto;
+}
+
+.navLink {
+  font-size: var(--step--1);
+  color: var(--ink-70);
+  padding-block: 0.25rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.navLink:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink-30);
+}
+
+.navLink[aria-current='page'] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.menuButton {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 0.375rem 0.75rem;
+  font-size: var(--step--1);
+  color: var(--ink-70);
+}
+
+/* ---- カテゴリ帯 ---- */
+
+.categoryRow {
+  background: var(--paper);
+}
+
+.categoryScroller {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  height: 44px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.categoryScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryLink {
+  flex: none;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.categoryLink:hover {
+  color: var(--accent);
+}
+
+/* ---- モバイルメニュー ---- */
+
+.mobileMenu {
+  display: none;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.mobileLink {
+  padding: 0.9375rem var(--page-pad);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step-0);
+}
+
+@media (max-width: 860px) {
+  .desktopNav {
+    display: none;
+  }
+
+  .menuButton {
+    display: block;
+  }
+
+  .mobileMenu {
+    display: flex;
+  }
+}

@@ -1,0 +1,221 @@
+/* ---- ヒーロー ---- */
+
+.hero {
+  border-bottom: 1px solid var(--line);
+}
+
+.heroInner {
+  padding-block: clamp(3rem, 1.5rem + 6vw, 6rem) clamp(2rem, 1rem + 3vw, 3.5rem);
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+.heroTitle {
+  margin-top: 1.25rem;
+  font-size: var(--step-5);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  max-width: 16ch;
+}
+
+.heroLead {
+  margin-top: 1.5rem;
+  max-width: 56ch;
+  font-size: var(--step-1);
+  color: var(--ink-70);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.heroStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  padding-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
+}
+
+.stripTile {
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.stripTile:hover {
+  border-color: var(--accent);
+}
+
+.stripTile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- セクション共通 ---- */
+
+.section {
+  padding-block: clamp(3rem, 2rem + 3vw, 4.5rem);
+}
+
+.bandSection {
+  padding-block: clamp(3rem, 2rem + 3vw, 4.5rem);
+  background: var(--paper-2);
+  border-block: 1px solid var(--line);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: var(--step-3);
+}
+
+.sectionLead {
+  margin-top: 0.5rem;
+  color: var(--ink-50);
+  max-width: 56ch;
+}
+
+.sectionLink {
+  flex: none;
+  font-size: var(--step--1);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.sectionLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* ---- カテゴリタイル ---- */
+
+.categoryGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.categoryTile {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.categoryTile:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.categoryName {
+  font-size: var(--step-0);
+}
+
+.categoryCount {
+  color: var(--ink-30);
+}
+
+/* ---- 購入の流れ ---- */
+
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+  margin-top: 2.5rem;
+}
+
+.step {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.stepNumber {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.stepTitle {
+  margin-top: 0.625rem;
+  font-size: var(--step-1);
+}
+
+.stepBody {
+  margin-top: 0.5rem;
+  font-size: var(--step--1);
+  color: var(--ink-70);
+  line-height: 1.7;
+}
+
+/* ---- 品質 ---- */
+
+.qualityGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem 3rem;
+  margin-top: 2rem;
+}
+
+.quality {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.qualityTitle {
+  font-size: var(--step-1);
+}
+
+.qualityBody {
+  margin-top: 0.5rem;
+  font-size: var(--step--1);
+  color: var(--ink-70);
+  line-height: 1.7;
+}
+
+/* ---- レスポンシブ ---- */
+
+@media (max-width: 900px) {
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .qualityGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 620px) {
+  .heroStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectionHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
