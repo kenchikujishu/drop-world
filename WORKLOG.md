@@ -1,5 +1,48 @@
 # 作業ログ
 
+## 2026-09-15 — Error 1102（Worker の CPU 上限超え）を解消
+
+### 症状
+
+drop-world.com を開くと **Error 1102 Worker exceeded resource limits** が出て、サイトが開けないことがあった。
+調べた時点では全ページ 200 で、**断続的**に発生していた。
+
+### 原因
+
+OpenNext の既定設定（インクリメンタルキャッシュなし）では、ビルド時に生成したページを配信せず、
+**アクセスのたびに Worker が React でページを組み立て直していた**。
+Cloudflare Workers の無料プランは1リクエストあたり CPU 10ms までなので、組み立てがそれを超えたときに 1102 になる。
+
+以前「Workers にファイルシステムが無いので商品0件になる」問題が出たのも、同じく毎回組み立て直していたのが根っこ。
+
+### 対処
+
+`open-next.config.ts` で、ビルド時に生成したページを Workers の静的アセットから返すようにした。
+
+```ts
+defineCloudflareConfig({
+  incrementalCache: staticAssetsIncrementalCache, // 読み取り専用。再検証（ISR）は使えない
+  enableCacheInterception: true,                 // キャッシュにあるページはサーバー処理を読み込まない
+});
+```
+
+生成済みページは `opennextjs-cloudflare deploy`（と `preview`）の中の populate 処理で
+`.open-next/assets/cdn-cgi/_next_cache/` に入る。`build` だけでは入らない。
+
+### 確認したこと
+
+- ローカルの Worker で、生成済みページ28件がキャッシュに入り、全ページ `x-opennext-cache: HIT`、応答 4〜7ms
+- 存在しない品番・商品の無いカテゴリは従来どおり 404（この場合だけは毎回組み立てる）
+
+### メモ
+
+- 手元の wrangler のログインが切れていて `wrangler tail` でログを取れなかった。推測ではなく、
+  キャッシュの有無とヘッダーで効果を確認した
+- このサイトは全ページが静的生成で再検証を使わないので、この設定で困ることはない。
+  Lemon の商品変更は、GitHub Actions のビルド→デプロイで新しいページが作られて反映される
+
+---
+
 ## 2026-09-15 — 過去データを撤去し、Lemon から実際に反映
 
 ### 経緯

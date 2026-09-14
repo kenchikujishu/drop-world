@@ -65,6 +65,11 @@ CAD 添景データ（人物・植栽・動物）を販売するストア。**�
 **実行時に `fs` を呼ばない。** `npm run dev`（Node）では動くのに本番で壊れる。
 本番に出す前の確認は `npm run preview`（実際の Worker が起動する）で行う。
 
+**`open-next.config.ts` の静的アセットキャッシュ（`staticAssetsIncrementalCache`）を外さない。**
+外すとアクセスのたびに Worker が React でページを組み立て直し、無料プランの CPU 上限（1リクエスト 10ms）を超えて
+**Error 1102（Worker exceeded resource limits）が断続的に出る**（2026-09-15 に実際に発生）。
+正しく効いているかは、応答ヘッダー `x-opennext-cache: HIT` で確認できる。存在しない URL（404）だけは毎回組み立てる。
+
 ### Next.js 15 の作法
 
 `params` は Promise。ページ / レイアウト / `generateMetadata` では `const { lang } = await params;` のように待ってから使う。

@@ -74,6 +74,7 @@ Actions の「サイトを更新」が **赤** になったら、開いてログ
 | `API キーが無効です（401）` | Lemon でキーを作り直して登録し直す |
 | `Lemon Squeezy に接続できませんでした` | Lemon 側の障害。時間をおいて Run workflow |
 | custom domain / DNS の権限エラー | Cloudflare の API トークンに **Zone → DNS → Edit** を足す |
+| サイトを開くと **Error 1102 Worker exceeded resource limits** | `open-next.config.ts` の静的アセットキャッシュが外れていないか確認。応答ヘッダー `x-opennext-cache` が `HIT` になっているか |
 
 **失敗しても、公開中のサイトは前回デプロイした状態のまま残る。**
 
