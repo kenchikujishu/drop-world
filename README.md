@@ -1,55 +1,45 @@
 # drop world
 
-CAD 添景データ（人物・植栽・動物）を販売するストア。
-決済とファイル配信は [Lemon Squeezy](https://www.lemonsqueezy.com/) が担当し、
-このサイトはカタログと外部チェックアウトへの導線に徹する。
+CAD 添景データ（人物・植栽・動物）のストア。https://drop-world.com
 
-日英バイリンガル（`/en` `/ja`）、全ページ静的生成、DB なし。
-本番: https://drop-world.com（Cloudflare Workers + OpenNext）
+- 商品は **Lemon Squeezy だけ**で管理する。サイトは Lemon の商品を自動で取り込んで表示する
+- Next.js 15 / Cloudflare Workers / GitHub Actions で自動デプロイ
 
-```bash
-npm install
-npm run dev        # http://localhost:3000 … 普段の開発
-npm run preview    # http://localhost:8787 … 本番と同じ Worker で確認
-```
+## 商品を出す人へ
+
+**[docs/POSTING.md](docs/POSTING.md)** を読んでください。Lemon の管理画面だけで完結します。
 
 ## ドキュメント
 
 | | |
 | --- | --- |
-| [CLAUDE.md](CLAUDE.md) | 技術構成・設計の決め事・残タスク |
-| [docs/ADD_PRODUCT.md](docs/ADD_PRODUCT.md) | 商品を1点追加する手順 |
-| [docs/DEPLOY.md](docs/DEPLOY.md) | Cloudflare Workers + ドメイン（drop-world.com）のセットアップ |
-| [docs/LEMON_SETUP.md](docs/LEMON_SETUP.md) | 審査に出す前のチェックリスト / 通過後の API 連携 |
+| [docs/POSTING.md](docs/POSTING.md) | 商品の投稿と反映（二人用）・最初の設定 |
+| [docs/GOING_LIVE.md](docs/GOING_LIVE.md) | Lemon の審査通過後に本番へ切り替える |
+| [docs/LEMON_SETUP.md](docs/LEMON_SETUP.md) | Lemon の審査に出す前のチェックリスト |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | デプロイの仕組みとトラブル対応 |
+| [CLAUDE.md](CLAUDE.md) | 技術構成・設計の決め事 |
 
-## スクリプト
+## 開発
 
-| コマンド | 内容 |
-| --- | --- |
-| `npm run dev` | 開発サーバー（Next.js） |
-| `npm run preview` | 本番と同じ Cloudflare Worker をローカルで起動 |
-| `npm run new:product` | 商品を対話的に追加 |
-| `npm run validate:products` | 商品JSONと画像の検査 + 索引の再生成 |
-| `npm run build` | 検査 → Next.js のビルド |
-| `npm run cf:build` | 検査 → Worker のバンドルまで |
-| `npm run deploy` | 手元から直接デプロイ |
-| `node scripts/generate-artwork.mjs` | 商品サムネイルの添景イラストを再生成 |
+```bash
+npm install
+npm run dev            # http://localhost:3000（API キーが無ければ見本データで動く）
+npm run lemon:check    # Lemon の商品がサイトにどう出るか確認
+npm run preview        # 本番と同じ Worker で確認（キー必須）
+```
+
+キーは `.env.local.example` をコピーして `.env.local` に書く。
 
 ## 構成
 
 ```
-content/
-  taxonomy.ts          カテゴリ・視点・フォーマットの定義（増やすときはここだけ）
-  i18n/{en,ja}.ts      UI文言と法務ページ本文（en.ts が型の正）
-  products/*.json      商品データ（1商品1ファイル）
-  products-index.ts    ↑を静的importする自動生成の索引（Workers に fs が無いため）
-  tokushoho.ts         特定商取引法に基づく表記
-lib/
-  products.ts          商品データの読み込み
-  product-schema.ts    zod スキーマ
-  pricing.ts           ★ 審査通過後の LS API 差し替え点
-app/[lang]/            ルートレイアウト兼全ページ（app/layout.tsx は無い）
-public/products/<slug>/  サムネイル画像
-wrangler.jsonc         Cloudflare Worker の設定
-open-next.config.ts    OpenNext アダプタの設定
+.github/workflows/deploy.yml   push・1時間ごと・手動でデプロイ
+scripts/lemon-sync.mjs         Lemon API → content/catalog.generated.json
+scripts/export-thumbnails.mjs  .ai / .pdf → Lemon 用の正方形画像
+content/categories.json        カテゴリと品番の記号（PPL / VEG / ANM）
+content/lemon-fixture.json     キーが無いときの見本データ（Lemon API と同じ形）
+content/i18n/{en,ja}.ts        UI の文言と法務ページ本文
+lib/products.ts                取り込んだ商品データの読み出し
+app/[lang]/                    全ページ
+wrangler.jsonc                 Worker とカスタムドメインの設定
 ```

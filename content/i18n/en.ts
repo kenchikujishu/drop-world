@@ -125,12 +125,11 @@ export const en = {
     specs: 'Specifications',
     licenseShort: 'Licensed for commercial and personal projects. Redistribution of the files themselves is not permitted.',
     licenseLink: 'Read the full license',
-    checkoutPending: 'Checkout link coming soon',
-    checkoutPendingNote: 'This set is not on sale yet. Please check back shortly.',
-
-    downloadHeading: 'Download',
-    downloadNote:
-      'The store is still being set up, so files are served directly from this site for now. Once it opens, downloads will be delivered by Lemon Squeezy after checkout. The license on this page applies either way.',
+    sku: 'SKU',
+    figures: 'Figures',
+    testModeLabel: 'Store activation in progress',
+    testModeNote:
+      'Our payment provider, Lemon Squeezy, is still reviewing this store, so checkout runs in test mode for now and no real payment is taken. Purchases open as soon as the review is complete.',
   },
 
   about: {

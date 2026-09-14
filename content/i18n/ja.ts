@@ -116,12 +116,11 @@ export const ja: Dictionary = {
     specs: '仕様',
     licenseShort: '商用・個人プロジェクトで利用できます。データそのものの再配布は許可されていません。',
     licenseLink: 'ライセンス全文を読む',
-    checkoutPending: '販売準備中',
-    checkoutPendingNote: 'このセットはまだ販売を開始していません。公開までしばらくお待ちください。',
-
-    downloadHeading: 'ダウンロード',
-    downloadNote:
-      'ストア準備中のため、現在はこのサイトから直接配布しています。正式公開後は Lemon Squeezy でのご購入後にダウンロードいただく形になります。いずれの場合もこのページのライセンスが適用されます。',
+    sku: '品番',
+    figures: '収録点数',
+    testModeLabel: 'ストア審査中',
+    testModeNote:
+      '決済代行の Lemon Squeezy によるストア審査中のため、現在チェックアウトはテストモードで動いており、実際の決済は発生しません。審査が完了し次第、購入できるようになります。',
   },
 
   about: {

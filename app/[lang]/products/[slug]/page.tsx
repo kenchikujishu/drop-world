@@ -4,38 +4,33 @@ import { notFound } from 'next/navigation';
 import BuyButton from '@/components/BuyButton';
 import Gallery from '@/components/Gallery';
 import ProductGrid from '@/components/ProductGrid';
-import {
-  LANGS,
-  categoryLabel,
-  formatLabel,
-  viewLabel,
-  type Lang,
-} from '@/content/taxonomy';
+import { LANGS, categoryLabel, type Lang } from '@/content/taxonomy';
 import { getDict, href } from '@/lib/i18n';
-import { resolvePrice } from '@/lib/pricing';
-import { getAllProducts, getDownloadSize, getProduct, getRelated } from '@/lib/products';
+import { getAllProducts, getProduct, getRelated } from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
 import styles from './product.module.css';
 
 type Params = { lang: Lang; slug: string };
 
+/**
+ * 全商品をビルド時に静的生成する。
+ * ⚠ `dynamicParams = false` は付けない。OpenNext の Worker 上では生成済みのページまで 404 になる。
+ * 存在しない品番はページ内の notFound() で 404 にしている。
+ */
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => getAllProducts().map((product) => ({ lang, slug: product.slug })));
 }
 
-export async function generateMetadata(props: { params: Promise<Params> }): Promise<Metadata> {
-  const params = await props.params;
-  const product = getProduct(params.slug);
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const { lang, slug } = await params;
+  const product = getProduct(slug);
   if (!product) return {};
 
-  const title = product.title[params.lang];
-  const description = product.summary[params.lang];
-
   return {
-    title,
-    description,
+    title: product.title,
+    description: product.summary,
     alternates: {
-      canonical: absoluteUrl(`/${params.lang}/products/${product.slug}`),
+      canonical: absoluteUrl(`/${lang}/products/${product.slug}`),
       languages: {
         en: absoluteUrl(`/en/products/${product.slug}`),
         ja: absoluteUrl(`/ja/products/${product.slug}`),
@@ -43,37 +38,30 @@ export async function generateMetadata(props: { params: Promise<Params> }): Prom
     },
     openGraph: {
       type: 'website',
-      title,
-      description,
-      images: [{ url: absoluteUrl(product.thumbnail) }],
+      title: product.title,
+      description: product.summary,
+      images: product.image ? [{ url: product.image }] : undefined,
     },
   };
 }
 
-export default async function ProductPage(props: { params: Promise<Params> }) {
-  const params = await props.params;
-  const product = getProduct(params.slug);
+export default async function ProductPage({ params }: { params: Promise<Params> }) {
+  const { lang, slug } = await params;
+  const product = getProduct(slug);
   if (!product) notFound();
 
-  const { lang } = params;
   const dict = getDict(lang);
-  const price = resolvePrice(product, lang);
   const related = getRelated(product);
 
   const specs = [
+    { label: dict.product.sku, value: product.sku },
     { label: dict.common.category, value: categoryLabel(product.category, lang) },
-    { label: dict.common.view, value: product.views.map((v) => viewLabel(v, lang)).join(' / ') },
-    {
-      label: dict.common.formats,
-      value: product.formats.map((f) => formatLabel(f, lang)).join(', '),
-    },
-    {
-      label: dict.common.whatsIncluded,
-      value: `${product.itemCount}${lang === 'ja' ? '点' : ' items'}`,
-    },
-    { label: dict.common.fileSize, value: product.fileSize },
-    { label: dict.common.released, value: product.publishedAt },
-  ];
+    product.figures
+      ? { label: dict.product.figures, value: `${product.figures}${lang === 'ja' ? '点' : ''}` }
+      : null,
+    product.formats.length > 0 ? { label: dict.common.formats, value: product.formats.join(', ') } : null,
+    product.publishedAt ? { label: dict.common.released, value: product.publishedAt } : null,
+  ].filter((spec): spec is { label: string; value: string } => spec !== null);
 
   return (
     <>
@@ -87,28 +75,24 @@ export default async function ProductPage(props: { params: Promise<Params> }) {
 
       <div className={`container ${styles.layout}`}>
         <div className={styles.media}>
-          <Gallery
-            images={product.gallery}
-            alt={product.title[lang]}
-            label={dict.common.gallery}
-          />
+          {product.image && (
+            <Gallery images={[product.image]} alt={product.title} label={dict.common.gallery} />
+          )}
         </div>
 
         <div className={styles.info}>
-          <p className="kicker">{categoryLabel(product.category, lang)}</p>
-          <h1 className={styles.title}>{product.title[lang]}</h1>
-          <p className={styles.summary}>{product.summary[lang]}</p>
+          <p className="kicker">
+            {product.sku} · {categoryLabel(product.category, lang)}
+          </p>
+          <h1 className={styles.title}>{product.title}</h1>
+          <p className={styles.summary}>{product.summary}</p>
 
           <div className={styles.buy}>
             <BuyButton
               checkoutUrl={product.checkoutUrl}
-              downloads={product.downloads.map((d) => ({
-                ...d,
-                size: getDownloadSize(d.file),
-              }))}
-              price={price.formatted}
+              price={product.price.formatted}
+              testMode={product.testMode}
               dict={dict}
-              lang={lang}
             />
           </div>
 
@@ -131,15 +115,14 @@ export default async function ProductPage(props: { params: Promise<Params> }) {
         </div>
       </div>
 
-      <section className={`container ${styles.description}`}>
-        <h2 className={styles.descriptionTitle}>{dict.product.aboutThisSet}</h2>
-        {product.description[lang]
-          .split('\n\n')
-          .filter(Boolean)
-          .map((paragraph, index) => (
+      {product.paragraphs.length > 1 && (
+        <section className={`container ${styles.description}`}>
+          <h2 className={styles.descriptionTitle}>{dict.product.aboutThisSet}</h2>
+          {product.paragraphs.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}
-      </section>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className={`container ${styles.related}`}>
@@ -148,24 +131,23 @@ export default async function ProductPage(props: { params: Promise<Params> }) {
         </section>
       )}
 
-      {/* 検索エンジン向けの構造化データ。価格は resolvePrice と同じ値を使う。 */}
+      {/* 検索エンジン向けの構造化データ */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Product',
-            name: product.title[lang],
-            description: product.summary[lang],
-            image: absoluteUrl(product.thumbnail),
+            name: product.title,
+            sku: product.sku,
+            description: product.summary,
+            image: product.image ?? undefined,
             brand: { '@type': 'Brand', name: dict.meta.siteName },
             offers: {
               '@type': 'Offer',
-              price: price.amount,
-              priceCurrency: price.currency,
-              availability: product.checkoutUrl
-                ? 'https://schema.org/InStock'
-                : 'https://schema.org/PreOrder',
+              price: product.price.amount,
+              priceCurrency: product.price.currency,
+              availability: 'https://schema.org/InStock',
               url: absoluteUrl(`/${lang}/products/${product.slug}`),
             },
           }),

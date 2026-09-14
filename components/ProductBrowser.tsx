@@ -2,9 +2,9 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CATEGORIES, FORMATS, VIEWS, type Lang } from '@/content/taxonomy';
+import { CATEGORIES, type Lang } from '@/content/taxonomy';
 import type { Dictionary } from '@/content/i18n/en';
-import type { Product } from '@/lib/product-schema';
+import type { Product } from '@/lib/products';
 import ProductGrid from './ProductGrid';
 import styles from './product-browser.module.css';
 
@@ -32,11 +32,15 @@ export default function ProductBrowser({
   const searchParams = useSearchParams();
   const [panelOpen, setPanelOpen] = useState(false);
 
+  // 商品が1点も無いカテゴリは選択肢に出さない
+  const availableCategories = useMemo(
+    () => CATEGORIES.filter((c) => products.some((p) => p.category === c.id)),
+    [products],
+  );
+
   const selected = useMemo(
     () => ({
       categories: parseList(searchParams.get('category')),
-      views: parseList(searchParams.get('view')),
-      formats: parseList(searchParams.get('format')),
       min: searchParams.get('min') ?? '',
       max: searchParams.get('max') ?? '',
       sort: (searchParams.get('sort') as SortId | null) ?? 'newest',
@@ -56,11 +60,11 @@ export default function ProductBrowser({
     [pathname, router, searchParams],
   );
 
-  const toggle = useCallback(
-    (key: 'category' | 'view' | 'format', id: string) => {
-      const current = parseList(searchParams.get(key));
+  const toggleCategory = useCallback(
+    (id: string) => {
+      const current = parseList(searchParams.get('category'));
       const next = current.includes(id) ? current.filter((v) => v !== id) : [...current, id];
-      setParam(key, next.join(','));
+      setParam('category', next.join(','));
     },
     [searchParams, setParam],
   );
@@ -73,29 +77,15 @@ export default function ProductBrowser({
       if (selected.categories.length > 0 && !selected.categories.includes(product.category)) {
         return false;
       }
-      if (selected.views.length > 0 && !product.views.some((v) => selected.views.includes(v))) {
-        return false;
-      }
-      if (
-        selected.formats.length > 0 &&
-        !product.formats.some((f) => selected.formats.includes(f))
-      ) {
-        return false;
-      }
       if (min !== null && Number.isFinite(min) && product.price.amount < min) return false;
       if (max !== null && Number.isFinite(max) && product.price.amount > max) return false;
       return true;
     });
 
-    return sortProducts(result, selected.sort, lang);
-  }, [products, selected, lang]);
+    return sortProducts(result, selected.sort);
+  }, [products, selected]);
 
-  const hasFilters =
-    selected.categories.length > 0 ||
-    selected.views.length > 0 ||
-    selected.formats.length > 0 ||
-    selected.min !== '' ||
-    selected.max !== '';
+  const hasFilters = selected.categories.length > 0 || selected.min !== '' || selected.max !== '';
 
   const sortOptions: { id: SortId; label: string }[] = [
     { id: 'newest', label: dict.common.sortNewest },
@@ -122,39 +112,36 @@ export default function ProductBrowser({
         className={`${styles.sidebar} ${panelOpen ? styles.sidebarOpen : ''}`}
         aria-label={dict.common.filters}
       >
-        {!lockedCategory && (
-          <FilterGroup
-            legend={dict.common.category}
-            options={CATEGORIES.map((c) => ({ id: c.id, label: c.label[lang] }))}
-            selected={selected.categories}
-            onToggle={(id) => toggle('category', id)}
-          />
+        {!lockedCategory && availableCategories.length > 1 && (
+          <fieldset className={styles.group}>
+            <legend className="kicker">{dict.common.category}</legend>
+            <div className={styles.options}>
+              {availableCategories.map((category) => (
+                <label key={category.id} className={styles.option}>
+                  <input
+                    type="checkbox"
+                    checked={selected.categories.includes(category.id)}
+                    onChange={() => toggleCategory(category.id)}
+                  />
+                  <span>{category.label[lang]}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
         )}
 
-        <FilterGroup
-          legend={dict.common.view}
-          options={VIEWS.map((v) => ({ id: v.id, label: v.label[lang] }))}
-          selected={selected.views}
-          onToggle={(id) => toggle('view', id)}
-        />
-
-        <FilterGroup
-          legend={dict.common.formats}
-          options={FORMATS.map((f) => ({ id: f.id, label: f.label[lang] }))}
-          selected={selected.formats}
-          onToggle={(id) => toggle('format', id)}
-        />
-
         <fieldset className={styles.group}>
-          <legend className="kicker">{dict.common.priceMin} / {dict.common.priceMax}</legend>
+          <legend className="kicker">
+            {dict.common.priceMin} / {dict.common.priceMax}
+          </legend>
           <div className={styles.priceRow}>
             <input
               type="number"
-              inputMode="numeric"
+              inputMode="decimal"
               min={0}
               className={`mono ${styles.priceInput}`}
               value={selected.min}
-              placeholder={dict.common.priceMin}
+              placeholder="$"
               aria-label={dict.common.priceMin}
               onChange={(event) => setParam('min', event.target.value)}
             />
@@ -163,11 +150,11 @@ export default function ProductBrowser({
             </span>
             <input
               type="number"
-              inputMode="numeric"
+              inputMode="decimal"
               min={0}
               className={`mono ${styles.priceInput}`}
               value={selected.max}
-              placeholder={dict.common.priceMax}
+              placeholder="$"
               aria-label={dict.common.priceMax}
               onChange={(event) => setParam('max', event.target.value)}
             />
@@ -213,41 +200,11 @@ export default function ProductBrowser({
   );
 }
 
-function FilterGroup({
-  legend,
-  options,
-  selected,
-  onToggle,
-}: {
-  legend: string;
-  options: { id: string; label: string }[];
-  selected: string[];
-  onToggle: (id: string) => void;
-}) {
-  return (
-    <fieldset className={styles.group}>
-      <legend className="kicker">{legend}</legend>
-      <div className={styles.options}>
-        {options.map((option) => (
-          <label key={option.id} className={styles.option}>
-            <input
-              type="checkbox"
-              checked={selected.includes(option.id)}
-              onChange={() => onToggle(option.id)}
-            />
-            <span>{option.label}</span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
-  );
-}
-
 function parseList(value: string | null): string[] {
   return value ? value.split(',').filter(Boolean) : [];
 }
 
-function sortProducts(products: Product[], sort: SortId, lang: Lang): Product[] {
+function sortProducts(products: Product[], sort: SortId): Product[] {
   const sorted = [...products];
   switch (sort) {
     case 'price-asc':
@@ -255,7 +212,7 @@ function sortProducts(products: Product[], sort: SortId, lang: Lang): Product[] 
     case 'price-desc':
       return sorted.sort((a, b) => b.price.amount - a.price.amount);
     case 'name-asc':
-      return sorted.sort((a, b) => a.title[lang].localeCompare(b.title[lang], lang));
+      return sorted.sort((a, b) => a.title.localeCompare(b.title, 'en'));
     case 'newest':
     default:
       return sorted.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));

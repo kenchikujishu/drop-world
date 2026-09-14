@@ -11,13 +11,24 @@ import {
   type Lang,
 } from '@/content/taxonomy';
 import { getDict } from '@/lib/i18n';
-import { getByCategory } from '@/lib/products';
+import { getByCategory, getCategoryCounts } from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
 
 type Params = { lang: Lang; category: string };
 
+/**
+ * 商品が1点も無いカテゴリのページは作らない。空のページを審査や検索エンジンに見せないため。
+ * ⚠ `dynamicParams = false` は付けない。OpenNext の Worker 上では生成済みのページまで 404 になる。
+ * 商品が無いカテゴリはページ内の notFound() で 404 にしている。
+ */
 export function generateStaticParams() {
-  return LANGS.flatMap((lang) => CATEGORY_IDS.map((category) => ({ lang, category })));
+  const counts = getCategoryCounts();
+  return LANGS.flatMap((lang) =>
+    CATEGORY_IDS.filter((category) => (counts[category] ?? 0) > 0).map((category) => ({
+      lang,
+      category,
+    })),
+  );
 }
 
 function toCategoryId(value: string): CategoryId | null {
@@ -53,6 +64,7 @@ export default async function CategoryPage(props: { params: Promise<Params> }) {
   const { lang } = params;
   const dict = getDict(lang);
   const products = getByCategory(category);
+  if (products.length === 0) notFound();
   const label = categoryLabel(category, lang);
 
   return (

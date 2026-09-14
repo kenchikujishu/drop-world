@@ -1,83 +1,81 @@
-import { DOWNLOAD_SIZES, RAW_PRODUCTS } from '@/content/products-index';
-import { productSchema, type Product } from './product-schema';
-import type { CategoryId } from '@/content/taxonomy';
+import catalogJson from '@/content/catalog.generated.json';
 
 /**
- * 商品データの読み込み。`content/products/*.json` を1商品1ファイルで持つ。
+ * 商品データ。
  *
- * ⚠ ファイルシステムは読まない。Cloudflare Workers に fs が無いため、
- *   実行時に fs を触ると商品0件のサイトになってしまう。
- *   代わりに自動生成の `content/products-index.ts` が全 JSON を静的 import しており、
- *   ビルド時にバンドルへ埋め込まれる（索引は validate:products が作り直す）。
+ * 出どころは Lemon Squeezy だけ。`scripts/lemon-sync.mjs` がビルド前に Lemon の API から取り込み、
+ * `content/catalog.generated.json` に書き出す。サイトはそのファイルを読むだけで、
+ * 実行時に Lemon と通信しない（Workers に API キーを置かない / Lemon が落ちてもサイトは落ちない）。
+ *
+ * 商品を足す・価格を変えるのは Lemon の管理画面で行う。→ docs/POSTING.md
  */
 
-let cache: Product[] | null = null;
+export type Product = {
+  /** 品番。Lemon の商品名の先頭に付ける（例: DW-PPL-001）。テスト→本番で Lemon の ID が変わっても不変。 */
+  sku: string;
+  /** URL 用。品番を小文字にしたもの。 */
+  slug: string;
+  category: string;
+  /** 商品名から品番を除いたもの。 */
+  title: string;
+  /** 説明文の1段落目。一覧カードとメタ説明に使う。 */
+  summary: string;
+  paragraphs: string[];
+  /** 説明文の「Figures: 6」行から。書いていなければ null。 */
+  figures: number | null;
+  /** 説明文の「Formats: DWG, AI」行から。 */
+  formats: string[];
+  price: { amount: number; currency: string; formatted: string };
+  checkoutUrl: string;
+  /** Lemon の商品画像（1000×1000）。 */
+  image: string | null;
+  publishedAt: string;
+  /** テストモードの商品（＝ストア審査前）。 */
+  testMode: boolean;
+};
 
+type Catalog = {
+  source: 'lemon' | 'fixture';
+  storeName: string;
+  syncedAt: string;
+  testMode: boolean;
+  products: Product[];
+};
+
+const catalog = catalogJson as unknown as Catalog;
+
+/** 新着順（取り込み時に並べ替え済み）。 */
 export function getAllProducts(): Product[] {
-  if (cache) return cache;
-
-  const products = RAW_PRODUCTS.map(({ file, data }) => {
-    const parsed = productSchema.safeParse(data);
-
-    if (!parsed.success) {
-      // ここで落とさないと壊れたデータのままデプロイされる。
-      throw new Error(
-        `content/products/${file} がスキーマに適合しません:\n${parsed.error.issues
-          .map((i) => `  - ${i.path.join('.')}: ${i.message}`)
-          .join('\n')}`,
-      );
-    }
-
-    if (parsed.data.slug !== file.replace(/\.json$/, '')) {
-      throw new Error(
-        `content/products/${file}: slug "${parsed.data.slug}" がファイル名と一致していません。`,
-      );
-    }
-
-    return parsed.data;
-  });
-
-  cache = sortByNewest(products);
-  return cache;
+  return catalog.products;
 }
 
 export function getProduct(slug: string): Product | undefined {
-  return getAllProducts().find((p) => p.slug === slug);
+  return catalog.products.find((p) => p.slug === slug);
 }
 
-export function getByCategory(category: CategoryId): Product[] {
-  return getAllProducts().filter((p) => p.category === category);
+export function getByCategory(category: string): Product[] {
+  return catalog.products.filter((p) => p.category === category);
 }
 
 export function getFeatured(limit = 4): Product[] {
-  const all = getAllProducts();
-  const featured = all.filter((p) => p.featured);
-  // featured が足りなければ新着で埋める。トップが寂しくならないように。
-  const rest = all.filter((p) => !p.featured);
-  return [...featured, ...rest].slice(0, limit);
+  return catalog.products.slice(0, limit);
 }
 
 export function getRelated(product: Product, limit = 3): Product[] {
-  return getAllProducts()
+  return catalog.products
     .filter((p) => p.slug !== product.slug && p.category === product.category)
     .slice(0, limit);
 }
 
-/** カテゴリごとの商品数。カテゴリ一覧で「0件」を出さないための判定にも使う。 */
+/** カテゴリごとの商品数。0件のカテゴリをナビに出さないために使う。 */
 export function getCategoryCounts(): Record<string, number> {
-  return getAllProducts().reduce<Record<string, number>>((acc, p) => {
+  return catalog.products.reduce<Record<string, number>>((acc, p) => {
     acc[p.category] = (acc[p.category] ?? 0) + 1;
     return acc;
   }, {});
 }
 
-function sortByNewest(products: Product[]): Product[] {
-  return [...products].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+export function getCatalogMeta(): Omit<Catalog, 'products'> {
+  const { products: _products, ...meta } = catalog;
+  return meta;
 }
-
-/** 配布 zip の表示サイズ。実ファイルから自動算出した値を引く。 */
-export function getDownloadSize(file: string): string | undefined {
-  return DOWNLOAD_SIZES[file];
-}
-
-export type { Product };

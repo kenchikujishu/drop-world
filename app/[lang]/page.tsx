@@ -5,12 +5,14 @@ import { getDict, href } from '@/lib/i18n';
 import { getCategoryCounts, getFeatured } from '@/lib/products';
 import styles from './home.module.css';
 
-export default async function HomePage(props: { params: Promise<{ lang: Lang }> }) {
-  const params = await props.params;
-  const { lang } = params;
+export default async function HomePage({ params }: { params: Promise<{ lang: Lang }> }) {
+  const { lang } = await params;
   const dict = getDict(lang);
   const featured = getFeatured(4);
   const counts = getCategoryCounts();
+  // 商品が1点も無いカテゴリは出さない（空のページに誘導しないため）
+  const categories = CATEGORIES.filter((category) => (counts[category.id] ?? 0) > 0);
+  const stripProducts = featured.filter((product) => product.image);
 
   return (
     <>
@@ -29,24 +31,24 @@ export default async function HomePage(props: { params: Promise<{ lang: Lang }> 
           </div>
         </div>
 
-        {featured.length > 0 && (
+        {stripProducts.length > 0 && (
           <div className={`container ${styles.heroStrip}`}>
-            {featured.slice(0, 4).map((product) => (
+            {stripProducts.map((product) => (
               <Link
                 key={product.slug}
                 href={href(lang, `/products/${product.slug}`)}
                 className={styles.stripTile}
-                aria-label={product.title[lang]}
+                aria-label={product.title}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={product.thumbnail} alt="" width={600} height={450} />
+                <img src={product.image ?? ''} alt="" width={600} height={600} />
               </Link>
             ))}
           </div>
         )}
       </section>
 
-      {/* ---- 注目のセット ---- */}
+      {/* ---- 新着 ---- */}
       {featured.length > 0 && (
         <section className={`container ${styles.section}`}>
           <div className={styles.sectionHead}>
@@ -63,18 +65,16 @@ export default async function HomePage(props: { params: Promise<{ lang: Lang }> 
       )}
 
       {/* ---- カテゴリ ---- */}
-      <section className={`container ${styles.section}`}>
-        <div className={styles.sectionHead}>
-          <div>
-            <h2 className={styles.sectionTitle}>{dict.home.categoriesTitle}</h2>
-            <p className={styles.sectionLead}>{dict.home.categoriesLead}</p>
+      {categories.length > 0 && (
+        <section className={`container ${styles.section}`}>
+          <div className={styles.sectionHead}>
+            <div>
+              <h2 className={styles.sectionTitle}>{dict.home.categoriesTitle}</h2>
+            </div>
           </div>
-        </div>
 
-        <ul className={styles.categoryGrid}>
-          {CATEGORIES.map((category) => {
-            const count = counts[category.id] ?? 0;
-            return (
+          <ul className={styles.categoryGrid}>
+            {categories.map((category) => (
               <li key={category.id}>
                 <Link
                   href={href(lang, `/categories/${category.id}`)}
@@ -82,14 +82,14 @@ export default async function HomePage(props: { params: Promise<{ lang: Lang }> 
                 >
                   <span className={styles.categoryName}>{category.label[lang]}</span>
                   <span className={`mono ${styles.categoryCount}`}>
-                    {count.toString().padStart(2, '0')}
+                    {String(counts[category.id] ?? 0).padStart(2, '0')}
                   </span>
                 </Link>
               </li>
-            );
-          })}
-        </ul>
-      </section>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* ---- 購入の流れ ---- */}
       <section className={styles.bandSection}>

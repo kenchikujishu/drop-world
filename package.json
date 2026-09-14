@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "npm run validate:products && next build",
+    "dev": "node --env-file-if-exists=.env.local scripts/lemon-sync.mjs --dev && next dev",
+    "build": "node --env-file-if-exists=.env.local scripts/lemon-sync.mjs && next build",
     "lint": "next lint",
-    "new:product": "node scripts/new-product.mjs",
-    "validate:products": "node scripts/validate-products.mjs",
-    "cf:build": "npm run validate:products && opennextjs-cloudflare build",
-    "preview": "npm run cf:build && opennextjs-cloudflare preview",
-    "deploy": "npm run cf:build && opennextjs-cloudflare deploy",
+    "lemon:check": "node --env-file-if-exists=.env.local scripts/lemon-sync.mjs --check",
+    "export:thumbs": "node scripts/export-thumbnails.mjs",
+    "cf:build": "opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {

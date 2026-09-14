@@ -13,10 +13,8 @@ next-env.d.ts
 .dev.vars
 cloudflare-env.d.ts
 
-# zip は基本的にリポジトリに入れない。
-*.zip
+# Lemon から取り込んだ商品データ。ビルドのたびに作り直すのでコミットしない。
+content/catalog.generated.json
 
-# ただし public/downloads/ の配布用 zip は例外。Lemon Squeezy の審査が通るまでは
-# サイトから直接配布するため、リポジトリに含める必要がある。
-# （審査通過後は LS のストレージに移し、ここは空にしてよい）
-!public/downloads/**/*.zip
+# 販売用の zip は Lemon Squeezy にアップロードする。リポジトリには入れない。
+*.zip

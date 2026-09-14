@@ -1,6 +1,6 @@
 import type { Lang } from '@/content/taxonomy';
 import type { Dictionary } from '@/content/i18n/en';
-import type { Product } from '@/lib/product-schema';
+import type { Product } from '@/lib/products';
 import ProductCard from './ProductCard';
 import styles from './product-grid.module.css';
 
