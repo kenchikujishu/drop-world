@@ -1,67 +1,37 @@
 {
-  "_comment": "API キーが無いときに npm run dev で使う見本データ。Lemon API の返り値と同じ形にしてあるので、取り込み処理の確認にも使える。本番のビルドでは使われない。",
+  "_comment": "API キーが無いときに npm run dev で使う見本データ。本番のビルドでは使われない。Lemon API の返り値と同じ形にしてあるので、取り込み処理（下書き・品番なしの除外など）の確認にも使う。",
   "store": {
     "id": "0",
     "attributes": { "name": "drop world (fixture)", "currency": "USD" }
   },
   "products": [
     {
-      "id": "fixture-1",
+      "id": "fixture-sample",
       "attributes": {
-        "name": "DW-PPL-001 Workers — Site & Street",
+        "name": "DW-PPL-000 Sample Product",
         "status": "published",
-        "description": "<p>A site worker in a short-sleeve work shirt, cap and safety boots, drawn walking in six views: top-down, two aerial three-quarter views, back, front and side. The same figure can be used consistently across a plan, an axonometric and an elevation.</p><p>Outline and light grey fill sit on separate layers, drawn at 1:1 in millimetres.</p><p>Figures: 6</p><p>Formats: DWG, AI</p>",
-        "price": 1299,
-        "price_formatted": "$12.99",
-        "buy_now_url": "https://drop-world.lemonsqueezy.com/buy/fixture-1",
-        "large_thumb_url": "/fixture/dw-ppl-001.png",
-        "created_at": "2026-09-14T00:00:00.000000Z",
-        "updated_at": "2026-09-14T00:00:00.000000Z",
-        "test_mode": true
-      }
-    },
-    {
-      "id": "fixture-2",
-      "attributes": {
-        "name": "DW-PPL-002 City Walk — Woman with Phone",
-        "status": "published",
-        "description": "<p>A young woman in an oversized shirt and wide trousers, looking at her phone as she walks. Six views: top-down, two aerial three-quarter views, front, back and side.</p><p>Outline and light grey fill sit on separate layers, drawn at 1:1 in millimetres.</p><p>Figures: 6</p><p>Formats: DWG, AI</p>",
+        "description": "<p>Sample product for local development. It never appears on the live site.</p><p>Figures: 1</p><p>Formats: DWG, AI</p>",
         "price": 999,
         "price_formatted": "$9.99",
-        "buy_now_url": "https://drop-world.lemonsqueezy.com/buy/fixture-2",
-        "large_thumb_url": "/fixture/dw-ppl-002.png",
-        "created_at": "2026-09-13T00:00:00.000000Z",
-        "updated_at": "2026-09-13T00:00:00.000000Z",
-        "test_mode": true
-      }
-    },
-    {
-      "id": "fixture-3",
-      "attributes": {
-        "name": "DW-PPL-003 Yukata Pair — Summer Festival",
-        "status": "published",
-        "description": "<p>A couple in yukata with geta sandals and a kinchaku bag, walking side by side. Four views: front, back and two aerial three-quarter views.</p><p>Line drawing without fill, drawn at 1:1 in millimetres.</p><p>Figures: 8</p><p>Formats: DWG, AI</p>",
-        "price": 1299,
-        "price_formatted": "$12.99",
-        "buy_now_url": "https://drop-world.lemonsqueezy.com/buy/fixture-3",
-        "large_thumb_url": "/fixture/dw-ppl-003.png",
-        "created_at": "2026-09-12T00:00:00.000000Z",
-        "updated_at": "2026-09-12T00:00:00.000000Z",
+        "buy_now_url": "https://example.com/checkout/sample",
+        "large_thumb_url": null,
+        "created_at": "2026-09-15T00:00:00.000000Z",
+        "updated_at": "2026-09-15T00:00:00.000000Z",
         "test_mode": true
       }
     },
     {
       "id": "fixture-draft",
       "attributes": {
-        "name": "DW-VEG-001 Street Trees (draft)",
+        "name": "DW-VEG-000 Draft Product",
         "status": "draft",
-        "description": "<p>Not published yet — should not appear on the site.</p>",
-        "price": 1499,
-        "price_formatted": "$14.99",
-        "buy_now_url": "https://drop-world.lemonsqueezy.com/buy/fixture-draft",
+        "description": "<p>Not published — should not appear.</p>",
+        "price": 999,
+        "price_formatted": "$9.99",
+        "buy_now_url": "https://example.com/checkout/draft",
         "large_thumb_url": null,
-        "created_at": "2026-09-11T00:00:00.000000Z",
-        "updated_at": "2026-09-11T00:00:00.000000Z",
+        "created_at": "2026-09-15T00:00:00.000000Z",
+        "updated_at": "2026-09-15T00:00:00.000000Z",
         "test_mode": true
       }
     },
@@ -73,10 +43,10 @@
         "description": "<p>Name does not start with a SKU — should be skipped with a warning.</p>",
         "price": 500,
         "price_formatted": "$5.00",
-        "buy_now_url": "https://drop-world.lemonsqueezy.com/buy/fixture-bad",
+        "buy_now_url": "https://example.com/checkout/bad",
         "large_thumb_url": null,
-        "created_at": "2026-09-10T00:00:00.000000Z",
-        "updated_at": "2026-09-10T00:00:00.000000Z",
+        "created_at": "2026-09-15T00:00:00.000000Z",
+        "updated_at": "2026-09-15T00:00:00.000000Z",
         "test_mode": true
       }
     }

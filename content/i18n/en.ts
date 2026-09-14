@@ -113,6 +113,7 @@ export const en = {
   products: {
     title: 'All products',
     lead: 'Original CAD entourage sets. Prices are one-time and include commercial use.',
+    empty: 'New sets are on the way. Please check back soon.',
   },
 
   categoryPage: {

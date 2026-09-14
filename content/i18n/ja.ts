@@ -104,6 +104,7 @@ export const ja: Dictionary = {
   products: {
     title: 'すべての商品',
     lead: 'オリジナルの CAD 添景セット。価格は買い切り、商用利用込みです。',
+    empty: '商品を準備中です。公開まで少しお待ちください。',
   },
 
   categoryPage: {

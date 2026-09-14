@@ -18,6 +18,8 @@
  * オプション:
  *   --check   表を出すだけでファイルは書かない
  *   --dev     キーが無ければ見本データ（content/lemon-fixture.json）で代用する
+ *
+ * 商品が0件でも失敗にはしない（空のサイトとして公開する）。
  */
 
 import fs from 'node:fs';
@@ -88,19 +90,14 @@ async function main() {
     return;
   }
 
-  if (source === 'lemon' && products.length === 0 && !DEV) {
-    throw new Error(
-      [
-        'Lemon から公開中（Published）の商品が1つも取れませんでした。',
-        '  このまま出すと空のストアになるので止めています。',
-        '  キーのモード（テスト / 本番）と、商品が Publish されているかを確認してください。',
-        skipped.length > 0
-          ? `  出さなかった商品:\n${skipped.map((s) => `    · ${s.name} — ${s.reason}`).join('\n')}`
-          : '',
-      ]
-        .filter(Boolean)
-        .join('\n'),
+  if (source === 'lemon' && products.length === 0) {
+    // 商品が0件の時期もあるので止めずに、空のサイトとして公開する。
+    // テスト / 本番キーの取り違えや Publish し忘れでも0件になるので、理由が分かるよう警告に残す。
+    warnings.push(
+      '公開中（Published）の商品が0件です。サイトは商品なしの状態で公開されます。' +
+        'キーのモード（テスト / 本番）と Publish を確認してください。',
     );
+    for (const s of skipped) warnings.push(`出していない商品: ${s.name} — ${s.reason}`);
   }
 
   const catalog = {

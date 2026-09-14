@@ -40,16 +40,16 @@ Lemon 管理画面 → **Products** → **+ New product**
 | --- | --- |
 | **Name** | **品番 + 半角スペース + 商品名**。例: `DW-PPL-004 Commuters — Morning Rush` |
 | **Description** | 英語の説明文。**最後の2行**に `Figures: 6` と `Formats: DWG, AI` を書く |
-| **Pricing** | Single payment、USD で金額 |
+| **Pricing** | Single payment で金額（通貨はストアの設定に従う） |
 | **Media** | 手順1の画像。**1枚目がサイトのサムネイル**になります |
 | **Files** | 販売する zip |
 
 説明文の例:
 
 ```
-A site worker in a short-sleeve work shirt, cap and safety boots, drawn walking in six views.
+Commuters on their way to work, drawn walking in six views: top-down, front, back and side.
 
-Outline and light grey fill sit on separate layers, drawn at 1:1 in millimetres.
+Outline and fill sit on separate layers, drawn at 1:1 in millimetres.
 
 Figures: 6
 Formats: DWG, AI
@@ -181,54 +181,3 @@ Lemon → **Settings** → **Team** → **+** → 相方のメールアドレス
 GitHub は、**60日間リポジトリに push が無い**と1時間ごとの自動実行を止めます。
 止まったら [Actions](https://github.com/kenchikujishu/drop-world/actions) → **サイトを更新** → **Enable workflow** で再開してください。
 （手動の Run workflow はいつでも使えます）
-
----
-
-## 初回の3商品（harajuku.ai から）
-
-画像はデスクトップの `drop-world-lemon-upload/harajuku/` にあります。価格は仮の案です。
-
-### sheet-1.png
-
-- **Name**: `DW-PPL-001 Workers — Site & Street`
-- **Price**: $12.99
-- **Description**:
-
-  ```
-  A site worker in a short-sleeve work shirt, cap and safety boots, drawn walking in six views: top-down, two aerial three-quarter views, back, front and side. The same figure can be used consistently across a plan, an axonometric and an elevation.
-
-  Outline and light grey fill sit on separate layers, drawn at 1:1 in millimetres.
-
-  Figures: 6
-  Formats: DWG, AI
-  ```
-
-### sheet-2.png
-
-- **Name**: `DW-PPL-002 City Walk — Woman with Phone`
-- **Price**: $9.99
-- **Description**:
-
-  ```
-  A young woman in an oversized shirt and wide trousers, looking at her phone as she walks. Six views: top-down, two aerial three-quarter views, front, back and side.
-
-  Outline and light grey fill sit on separate layers, drawn at 1:1 in millimetres.
-
-  Figures: 6
-  Formats: DWG, AI
-  ```
-
-### sheet-3.png
-
-- **Name**: `DW-PPL-003 Yukata Pair — Summer Festival`
-- **Price**: $12.99
-- **Description**:
-
-  ```
-  A couple in yukata with geta sandals and a kinchaku bag, walking side by side. Four views: front, back and two aerial three-quarter views.
-
-  Line drawing without fill, drawn at 1:1 in millimetres.
-
-  Figures: 8
-  Formats: DWG, AI
-  ```

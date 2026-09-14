@@ -44,12 +44,19 @@ export default async function ProductsPage(props: { params: Promise<{ lang: Lang
       </div>
 
       <div className="container">
-        {/* ProductBrowser は useSearchParams を使う client component なので Suspense 境界が要る。
-            fallback を「絞り込み前の全件」にしておくと、プリレンダーされた HTML に商品一覧が
-            そのまま入る（検索エンジンと JS 無効時のため）。ハイドレート後に絞り込み版へ差し替わる。 */}
-        <Suspense fallback={<ProductGrid products={products} lang={lang} dict={dict} />}>
-          <ProductBrowser products={products} lang={lang} dict={dict} />
-        </Suspense>
+        {products.length === 0 ? (
+          // まだ商品が1点も無いとき。絞り込みの UI は出さない
+          <div style={{ paddingBlock: '2.5rem 5rem' }}>
+            <ProductGrid products={[]} lang={lang} dict={dict} emptyMessage={dict.products.empty} />
+          </div>
+        ) : (
+          // ProductBrowser は useSearchParams を使う client component なので Suspense 境界が要る。
+          // fallback を「絞り込み前の全件」にしておくと、プリレンダーされた HTML に商品一覧が
+          // そのまま入る（検索エンジンと JS 無効時のため）。ハイドレート後に絞り込み版へ差し替わる。
+          <Suspense fallback={<ProductGrid products={products} lang={lang} dict={dict} />}>
+            <ProductBrowser products={products} lang={lang} dict={dict} />
+          </Suspense>
+        )}
       </div>
     </>
   );
