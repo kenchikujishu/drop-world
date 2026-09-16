@@ -166,6 +166,9 @@ export const ja: Dictionary = {
     orderLabel: 'ご注文・決済に関するお問い合わせ',
     orderValue:
       '領収書、決済エラー、ダウンロードリンクの再送については、Lemon Squeezy から届く確認メールに記載の注文番号を添えてご連絡ください。',
+    businessLabel: '運営者',
+    businessValue:
+      '「drop world」は日本を拠点とする2名の制作チームです（屋号: drop world ／ 運営責任者: 宮地凌央）。所在地・電話番号はご請求があったら遅滞なく開示します。個々のご注文の販売事業者は Lemon Squeezy です。',
     beforeYouWrite: 'お問い合わせの前に',
     beforeYouWriteBody: 'ファイル形式・対応ソフト・再ダウンロードについては、よくある質問でほぼ解決できます。',
     faqLink: 'よくある質問を読む',

@@ -175,6 +175,9 @@ export const en = {
     orderLabel: 'Order and payment issues',
     orderValue:
       'For receipts, failed payments, or re-sending a download link, include the order number from your Lemon Squeezy confirmation email.',
+    businessLabel: 'Who you are buying from',
+    businessValue:
+      'drop world is a two-person studio based in Japan, trading as “drop world” and run by Ryo Miyaji. Our postal address and phone number are available on request by email. Lemon Squeezy is the merchant of record for every order.',
     beforeYouWrite: 'Before you write',
     beforeYouWriteBody: 'The FAQ answers most questions about file formats, software support and re-downloads.',
     faqLink: 'Read the FAQ',

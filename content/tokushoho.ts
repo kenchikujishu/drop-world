@@ -19,6 +19,9 @@ export const TOKUSHOHO_ROWS: TokushohoRow[] = [
   {
     label: '販売業者',
     value: '屋号「drop world」',
+    note:
+      '当サイトはデータの制作・提供を行います。個々のご注文の販売事業者（Merchant of Record）は ' +
+      'Lemon Squeezy, LLC となり、決済・税務処理・領収書の発行・ファイル配信は同社が行います。',
   },
   {
     label: '運営責任者',
@@ -45,8 +48,11 @@ export const TOKUSHOHO_ROWS: TokushohoRow[] = [
   },
   {
     label: '販売価格',
-    value: '各商品ページに表示された金額（消費税込）。',
-    note: '為替レートおよび決済国により、決済画面での表示額が異なる場合があります。',
+    value: '各商品ページに表示された米ドル（USD）建ての金額。',
+    note:
+      'お住まいの国・地域により、決済画面で消費税・VAT 等が加算される場合があります（税額の計算と納付は、' +
+      '販売事業者である Lemon Squeezy が行います）。日本円でのお支払額は、決済時の為替レートと' +
+      'カード会社の手数料により変動します。',
   },
   {
     label: '商品代金以外の必要料金',

@@ -57,6 +57,13 @@ export default async function ContactPage(props: { params: Promise<{ lang: Lang 
             <dt>{dict.contact.orderLabel}</dt>
             <dd>{dict.contact.orderValue}</dd>
           </div>
+
+          {/* 誰から買うのかを英語圏の購入者にも示す（Lemon Squeezy の審査でも見られる）。
+              詳しい事業者情報は特商法のページ。 */}
+          <div className={styles.row}>
+            <dt>{dict.contact.businessLabel}</dt>
+            <dd>{dict.contact.businessValue}</dd>
+          </div>
         </dl>
 
         <section className={styles.aside}>

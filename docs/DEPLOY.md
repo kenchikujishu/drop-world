@@ -55,12 +55,35 @@ deploy 時に DNS レコードと証明書が自動で用意されるので、�
 ## サポート用メール
 
 `support@drop-world.com` はサイト内（お問い合わせ・特商法表記・フッター）に出ており、Lemon の審査でも見られる。
-Cloudflare の **Email Routing** で普段のメールに転送する。
+**申請前に受信できる状態にしておくこと。**
 
-1. Cloudflare → `drop-world.com` → **Email** → Email Routing を有効化（MX / TXT はボタンで入る）
-2. Custom address `support@drop-world.com` → 転送先を登録 → 届いた確認メールで verify
+ドメインが Cloudflare にあるので、**Email Routing** で Gmail に転送するのが早い（無料・5分）。
 
-返信を `support@` 名義で送りたい場合は、Gmail の「他のメールアドレスとしてメールを送信」に登録する。
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → 左の **Compute** → **Email Service** → **Email Routing**
+   （古い画面では `drop-world.com` を開いて左の **Email**）
+2. **Onboard Domain** → `drop-world.com` を選ぶ → 追加される DNS レコードを確認して **Done**
+   - MX 3件（受信を Cloudflare に向ける）
+   - TXT 2件（SPF と DKIM）
+   - ⚠ ここで **既存の MX レコードは置き換わる**。このドメインで他のメールを受けている場合は先に確認する
+3. **Destination Addresses** → 受け取りたい Gmail を登録 → Gmail 側に届く確認メールの
+   **Verify email address** を押す（これを踏まないと転送されない）
+4. **Routing Rules** → **Create routing rule**
+   - Email pattern: `support` ＋ `@drop-world.com`
+   - Action: **Send to an email** → 手順3の Gmail
+5. 別のメールから `support@drop-world.com` に試しに送り、Gmail に届くか確認する（迷惑メールも見る）
+
+> **Catch-all** を有効にすると、`hello@` など他の宛名もまとめて受け取れる。
+> 誤字で届かない事故が減るので、有効にしておいてよい。
+
+### 返信について
+
+Cloudflare Email Routing は **受信（転送）専用**で、送信はできない。
+そのまま Gmail から返信すると、**差出人が個人の Gmail アドレスになる**。
+
+- 当面はそれで困らない（署名に drop world と書けばよい）
+- `support@drop-world.com` **名義で送りたい**場合は、送信できるメールサービスが別に要る
+  （Zoho Mail の無料プラン、Google Workspace など）。登録後、Gmail の
+  「他のメールアドレスとしてメールを送信」に SMTP を設定すれば、Gmail から差出人を選べる
 
 ---
 
