@@ -75,15 +75,27 @@ deploy 時に DNS レコードと証明書が自動で用意されるので、�
 > **Catch-all** を有効にすると、`hello@` など他の宛名もまとめて受け取れる。
 > 誤字で届かない事故が減るので、有効にしておいてよい。
 
-### 返信について
+### `support@` 名義で返信する
 
 Cloudflare Email Routing は **受信（転送）専用**で、送信はできない。
-そのまま Gmail から返信すると、**差出人が個人の Gmail アドレスになる**。
+そのまま Gmail から返信すると **差出人が個人の Gmail アドレスになる**ので、
+送信できるメールサービスを別に用意する。
 
-- 当面はそれで困らない（署名に drop world と書けばよい）
-- `support@drop-world.com` **名義で送りたい**場合は、送信できるメールサービスが別に要る
-  （Zoho Mail の無料プラン、Google Workspace など）。登録後、Gmail の
-  「他のメールアドレスとしてメールを送信」に SMTP を設定すれば、Gmail から差出人を選べる
+> ⚠ Gmail の「他のメールアドレスとしてメールを送信」（送信用 SMTP を登録して Gmail から
+> 別アドレス名義で送る方法）は、**Google 以外のアドレスについて 2027年1月で終了**する
+> （[Gmail ヘルプ](https://support.google.com/mail/answer/17101213)）。
+> いま組んでも1年ほどで作り直しになるため、下の2つから選ぶ。
+
+| 方法 | 費用 | 受信の扱い | 向き |
+| --- | --- | --- | --- |
+| **Zoho Mail 無料プラン** | 無料（5ユーザー・各5GB） | **MX を Zoho に向け替える**（Cloudflare Email Routing は解除） | 費用をかけたくない場合。ブラウザと Zoho 純正アプリからのみ利用可（IMAP / SMTP は有料プラン） |
+| **Google Workspace** | 1ユーザー月 $7 前後 | **MX を Google に向け替える**（同上） | いつもの Gmail の画面で完結させたい場合。`support@` はユーザーの**エイリアス**にすれば1ユーザー分の課金で足りる |
+
+どちらも `drop-world.com` の MX を置き換えるため、**Cloudflare Email Routing とは併用しない**
+（Email Routing を止めてから、新しい MX を入れる）。
+
+Zoho は無料プランが使えるデータセンターが限られる。登録時に日本（jp）を選べない場合は、
+使える地域を選ぶか Google Workspace にする。
 
 ---
 

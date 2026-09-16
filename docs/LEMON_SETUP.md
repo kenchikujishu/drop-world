@@ -56,6 +56,7 @@ Lemon Squeezy（以下 LS）は新規ストアを人が確認する。公式に�
 - [x] 「受託制作ではなく既製データの販売」「全点オリジナルで著作権は当方」と明記
 - [x] LS が Merchant of Record であることを規約・プライバシー・FAQ に明記
 - [x] **お問い合わせページに運営者を英語で明記**（誰から買うのかが分かるように。2026-09-16）
+- [x] **About ページを補強**（運営者・販売の範囲・サポートと返金を追加。2026-09-16）
 - [x] 特定商取引法に基づく表記（日本語。→ 下の「日本の特商法について」）
 - [x] 独自ドメイン drop-world.com で公開、価格は USD 表示
 
@@ -63,7 +64,8 @@ Lemon Squeezy（以下 LS）は新規ストアを人が確認する。公式に�
 
 ## 4. 残りの手順
 
-- [ ] **`support@drop-world.com` を受信できるようにする** → [DEPLOY.md](DEPLOY.md#サポート用メール)
+- [x] **`support@drop-world.com` を受信できるようにする**（2026-09-16、Cloudflare Email Routing）
+      → `support@` 名義で返信したい場合は [DEPLOY.md](DEPLOY.md#support-名義で返信する)
 - [ ] **販売する商品をテストモードで作る** → [POSTING.md](POSTING.md)
 - [ ] 相方を Teams に招待
 - [ ] ストア設定（Settings → General）: ストア名、ストア URL `https://drop-world.com`、サポート用メール

@@ -138,10 +138,25 @@ export const en = {
     lead: 'A small drawing studio that makes CAD entourage, and sells it as files.',
     sections: [
       {
+        heading: 'Who we are',
+        body: [
+          'drop world is run by two people in Japan. We draw every set ourselves and sell the results as files. The trading name is “drop world” and the responsible operator is Ryo Miyaji.',
+          'We are small on purpose. The catalogue grows slowly, every set is drawn and checked by hand, and the person who answers your email is the person who drew the files.',
+          'Our postal address and phone number are available on request by email. A formal business disclosure, required for sales in Japan, is published on our Japanese legal notice page.',
+        ],
+      },
+      {
         heading: 'What we sell',
         body: [
           'drop world is a digital product store. We sell finished, ready-made CAD entourage libraries as downloadable files. Each product is a fixed set of drawings that you buy once and use as many times as you like within the terms of our license.',
           'We are not a design agency and we do not take commissions, drafting work, or any other service engagements. Everything on this site is an off-the-shelf file, priced and described in advance.',
+        ],
+      },
+      {
+        heading: 'Where we sell',
+        body: [
+          'We sell worldwide. Prices are set in US dollars and the site is published in English and Japanese. Any sales tax or VAT due in your country is added at checkout and remitted by Lemon Squeezy.',
+          'The sets are drawn for architecture and landscape practices, students, and visualisation studios — anyone who needs entourage that matches the rest of the drawing instead of fighting it.',
         ],
       },
       {
@@ -161,6 +176,14 @@ export const en = {
         heading: 'Payments and delivery',
         body: [
           'Payments and file delivery are handled by Lemon Squeezy, which acts as the merchant of record for every order. That means Lemon Squeezy processes your payment, handles applicable sales tax and VAT, issues your receipt, and serves the download link.',
+          'Checkout takes major cards and PayPal. Your download link is emailed within minutes of the payment clearing, so there is nothing to install and no account to create here. The amount charged in your own currency depends on your card issuer’s exchange rate.',
+        ],
+      },
+      {
+        heading: 'Support and refunds',
+        body: [
+          'One address handles everything — orders, licensing questions, files that will not open. We reply within two business days, Monday to Friday, Japan time.',
+          'If a file is corrupt, never arrived, or is materially different from what its product page described, write to us within 14 days of purchase and we will refund it in full. The refund policy sets out the full terms.',
         ],
       },
     ] as Section[],

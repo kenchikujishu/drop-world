@@ -114,7 +114,7 @@ npm run deploy                           # 手元から直接デプロイ（キ�
 - [ ] LS: 販売する商品をテストモードで作る
 - [x] LS: ストアの通貨を USD にする（2026-09-15。サイトは LS の通貨のまま表示する）
 - [ ] LS: 相方を Teams に招待
-- [ ] `support@drop-world.com` を受信できるようにする（Cloudflare Email Routing。**申請前に必須**）
+- [x] `support@drop-world.com` を受信できるようにする（2026-09-16、Cloudflare Email Routing で転送）
 - [x] 特定商取引法の表記（`content/tokushoho.ts`。2026-09-16。所在地・電話番号は請求時開示）
 - [x] 運営者情報を英語でも明記（お問い合わせページ。2026-09-16）
 - [ ] LS: 受取方法（Settings → Payout。日本は銀行振込可。最低 $50・月2回・USD）
