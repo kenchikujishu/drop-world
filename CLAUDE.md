@@ -115,7 +115,7 @@ npm run deploy                           # 手元から直接デプロイ（キ�
 - [x] LS: ストアの通貨を USD にする（2026-09-15。サイトは LS の通貨のまま表示する）
 - [ ] LS: 相方を Teams に招待
 - [ ] `support@drop-world.com` を受信できるようにする（Cloudflare Email Routing）
-- [ ] 特定商取引法の表記の空欄（`content/tokushoho.ts`）
+- [x] 特定商取引法の表記（`content/tokushoho.ts`。2026-09-16。所在地・電話番号は請求時開示）
 - [ ] LS のストア設定（ストア URL = drop-world.com、サポートメール）→ Activate your store
 
 詳細は `docs/LEMON_SETUP.md`。
