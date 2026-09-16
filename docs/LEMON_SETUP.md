@@ -22,14 +22,38 @@ Lemon Squeezy（以下 LS）は新規ストアを人が確認する。公式に�
 | 本人確認書類 | パスポート または 運転免許証の画像。LS の画面から提出する |
 | 氏名・生年月日・住所 | LS に登録する事業者情報（**サイトには出ない**） |
 | 事業形態 | 個人事業（屋号「drop world」／運営責任者 宮地凌央） |
-| 受取方法 | 日本の銀行口座 または PayPal。**日本は銀行振込に対応**している |
+| 受取方法 | 日本の銀行口座 または PayPal。**日本は銀行振込に対応**している（→ 下の「受取口座について」） |
 | 銀行口座の情報 | 銀行名・支店・口座番号・名義（英字）。SWIFT を聞かれることがある |
 | 税務書類 | 米国以外の個人なので、求められたら **W-8BEN**。LS の画面から入力できる |
 | ストア URL | `https://drop-world.com` |
 | サポート用メール | `support@drop-world.com`（**受信できる状態にしてから**申請する） |
 
 入金の条件（[Getting Paid](https://docs.lemonsqueezy.com/help/getting-started/getting-paid)）:
-**最低 $50**、月2回（1日・15日に作成、売上は13日間保留）、**支払いは USD**。
+**最低 $50**、月2回（1日・15日に作成、売上は13日間保留）。
+
+### 受取口座について
+
+販売通貨は USD だが、**受取通貨に JPY を選べる**。公式の記載:
+
+> Bank payouts will be made in USD. For bank payouts to a currency other than USD, the total will be converted to your chosen currency.
+> Payouts made using bank transfers will be converted to your local currency using the **mid-market exchange rate** at the time of payout.
+
+銀行の TTB レートより有利なので、**JPY 受け取りを選ぶ**。
+
+- 口座は**本人名義**（英字表記。例 `MIYAJI RYO`）。屋号だけの名義は避ける
+- **PayPay銀行は使えない。** 同行は海外からの送金（被仕向送金）を取り扱っていないため、
+  LS の銀行検索にも出てこない（[PayPay銀行 FAQ](https://help.paypay-bank.co.jp/hc/ja/articles/900002596683-%E5%A4%96%E5%9B%BD%E3%81%B8%E3%81%AE%E9%80%81%E9%87%91%E3%82%84%E5%A4%96%E5%9B%BD%E3%81%8B%E3%82%89%E3%81%AE%E9%80%81%E9%87%91%E3%81%AF%E5%8F%96%E3%82%8A%E6%89%B1%E3%81%A3%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%E3%81%8B)）。
+  外貨受取サービスも「国内金融機関からの USD 送金」限定で、海外からの受け取りは対象外
+- **Wise も勧めない。** Wise は日本の銀行ではないので LS の銀行検索に出ない。
+  JPY の受取口座情報は発行されず、USD の口座情報は米国の銀行のもののため、
+  日本の事業者の入金先としては弾かれる可能性が高い。日本居住者は残高の上限（100万円相当）もある
+- 使えるのは メガバンク（三菱UFJ / 三井住友 / みずほ）、ゆうちょ銀行、楽天銀行 など。
+  検索欄は `MUFG` `Japan Post Bank` `Rakuten` のように**英語表記**でも試す
+- **被仕向送金手数料**（海外からの入金にかかる手数料）は銀行により1件あたり数百円〜数千円。
+  入金は月2回なので、手数料の安い口座を選ぶと差が出る。使う銀行に事前に確認する
+
+どうしても銀行が決まらなければ PayPal でも受け取れるが、**USD のみ**で、円に替える際に
+PayPal の為替スプレッド（実勢より数％不利）が乗る。銀行が使えるなら銀行の方が得。
 
 ---
 
