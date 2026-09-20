@@ -31,6 +31,45 @@ const FIXTURE_FILE = path.join(ROOT, 'content', 'lemon-fixture.json');
 const CATEGORIES = JSON.parse(
   fs.readFileSync(path.join(ROOT, 'content', 'categories.json'), 'utf-8'),
 );
+const SUB_AXES = JSON.parse(
+  fs.readFileSync(path.join(ROOT, 'content', 'subcategories.json'), 'utf-8'),
+).axes;
+
+/** 「Japanese Street」「axono」のような書き方のゆれを id に寄せる。 */
+function normalizeTag(value) {
+  return String(value).trim().toLowerCase().replace(/[\s_]+/g, '-');
+}
+
+/** 軸ごとに「書かれうる語 → id」の表を作る（id 本体・別名の両方を入れる）。 */
+const SUB_LOOKUP = SUB_AXES.map((axis) => {
+  const terms = new Map();
+  for (const item of axis.items) {
+    terms.set(normalizeTag(item.id), item.id);
+    for (const alias of item.aliases ?? []) terms.set(normalizeTag(alias), item.id);
+  }
+  return {
+    id: axis.id,
+    keyword: axis.keyword,
+    // 説明文の行頭に書ける見出し。「Scene:」「シーン:」など
+    linePattern: new RegExp(
+      `^(${[axis.keyword, ...(axis.keywordAliases ?? [])].join('|')})\\s*[:：]\\s*(.+)$`,
+      'i',
+    ),
+    terms,
+    options: axis.items.map((item) => item.id),
+  };
+});
+
+// id が全軸で重複していると、どの軸の語か決められなくなる。
+{
+  const ids = SUB_AXES.flatMap((axis) => axis.items.map((item) => item.id));
+  const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
+  if (dup.length > 0) {
+    throw new Error(
+      `content/subcategories.json の id が重複しています: ${[...new Set(dup)].join(', ')}`,
+    );
+  }
+}
 // テスト用に差し替えられるようにしてある。通常は触らない。
 const API_BASE = (process.env.LEMONSQUEEZY_API_BASE ?? 'https://api.lemonsqueezy.com/v1').replace(
   /\/$/,
@@ -225,7 +264,13 @@ function normalize(rawProducts, currency) {
       continue;
     }
 
-    const { paragraphs, figures, formats } = parseDescription(a.description);
+    const { paragraphs, figures, formats, hoverImage, subcategories, unknownTags } =
+      parseDescription(a.description);
+    for (const { axis, value, options } of unknownTags) {
+      warnings.push(
+        `${sku}: ${axis} の「${value}」は登録されていません（使えるのは ${options.join(' / ')}）`,
+      );
+    }
     const product = {
       sku,
       slug: sku.toLowerCase(),
@@ -235,6 +280,7 @@ function normalize(rawProducts, currency) {
       paragraphs,
       figures,
       formats,
+      subcategories,
       price: {
         amount: Number(a.price ?? 0) / 100,
         currency,
@@ -242,6 +288,9 @@ function normalize(rawProducts, currency) {
       },
       checkoutUrl: a.buy_now_url,
       image: a.large_thumb_url || null,
+      // LS の API は商品画像を1枚（large_thumb_url）しか返さない。
+      // 2枚目（カードのホバー用）は説明文に貼った画像、または「Hover: https://…」の行から取る。
+      hoverImage,
       publishedAt: String(a.created_at ?? '').slice(0, 10),
       updatedAt: String(a.updated_at ?? a.created_at ?? ''),
       testMode: Boolean(a.test_mode),
@@ -270,10 +319,18 @@ function normalize(rawProducts, currency) {
 /**
  * Lemon の説明文（HTML）を段落の配列にする。
  * 「Figures: 6」「Formats: DWG, AI」の行は仕様として抜き出し、本文からは除く。
+ * 説明文に貼られた画像、または「Hover: https://…」の行は、カードのホバー用2枚目として取り出す。
  * HTML は描画せずテキストとして扱う（管理画面からの入力をそのままページに埋め込まないため）。
  */
 function parseDescription(html) {
-  const text = String(html ?? '')
+  const source = String(html ?? '');
+  // 説明文に貼られた画像の1枚目。https のみ（javascript: などを弾く）。
+  const embedded = [...source.matchAll(/<img[^>]+src\s*=\s*["']([^"']+)["']/gi)]
+    .map((m) => m[1].trim())
+    .find((url) => /^https:\/\//i.test(url));
+  let hoverImage = embedded ?? null;
+
+  const text = source
     .replace(/<\s*br\s*\/?>/gi, '\n')
     .replace(/<\/\s*(p|div|li|h[1-6])\s*>/gi, '\n')
     .replace(/<[^>]+>/g, '')
@@ -287,11 +344,32 @@ function parseDescription(html) {
   const paragraphs = [];
   let figures = null;
   let formats = [];
+  const subcategories = [];
+  const unknownTags = [];
 
   for (const line of text.split('\n').map((l) => l.trim()).filter(Boolean)) {
     const figuresLine = line.match(/^(figures|点数)\s*[:：]\s*(\d+)/i);
     if (figuresLine) {
       figures = Number(figuresLine[2]);
+      continue;
+    }
+    const hoverLine = line.match(/^(hover|ホバー|2枚目)\s*[:：]\s*(\S+)$/i);
+    if (hoverLine) {
+      if (/^https:\/\//i.test(hoverLine[2])) hoverImage = hoverLine[2];
+      continue;
+    }
+    // Action: / View: / Scene: の行。1行に複数書ける（カンマ・読点・スラッシュ区切り）。
+    const axis = SUB_LOOKUP.find((a) => a.linePattern.test(line));
+    if (axis) {
+      const [, , values] = line.match(axis.linePattern);
+      for (const value of values.split(/[,、/]+/).map((v) => v.trim()).filter(Boolean)) {
+        const id = axis.terms.get(normalizeTag(value));
+        if (id) {
+          if (!subcategories.includes(id)) subcategories.push(id);
+        } else {
+          unknownTags.push({ axis: axis.keyword, value, options: axis.options });
+        }
+      }
       continue;
     }
     const formatsLine = line.match(/^(formats|形式)\s*[:：]\s*(.+)$/i);
@@ -305,7 +383,12 @@ function parseDescription(html) {
     paragraphs.push(line);
   }
 
-  return { paragraphs, figures, formats };
+  // JSON に書いてある順（軸 → 語）に並べる。表示の順序を安定させるため。
+  const ordered = SUB_AXES.flatMap((axis) => axis.items.map((item) => item.id)).filter((id) =>
+    subcategories.includes(id),
+  );
+
+  return { paragraphs, figures, formats, hoverImage, subcategories: ordered, unknownTags };
 }
 
 function printTable({ products, skipped, warnings, source, storeName }) {
@@ -316,6 +399,7 @@ function printTable({ products, skipped, warnings, source, storeName }) {
       `  ${p.sku}  ${p.price.formatted.padStart(8)}  ${p.category.padEnd(10)}  ${p.title}` +
         `${p.figures ? `  (${p.figures} figures)` : ''}${p.testMode ? '  [test]' : ''}`,
     );
+    if (p.subcategories.length > 0) console.log(`            ${p.subcategories.join(' · ')}`);
   }
   if (skipped.length > 0) {
     console.log('\nサイトに出さない商品:');

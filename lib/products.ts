@@ -25,10 +25,14 @@ export type Product = {
   figures: number | null;
   /** 説明文の「Formats: DWG, AI」行から。 */
   formats: string[];
+  /** 説明文の「Action:／View:／Scene:」行から。語彙は content/subcategories.json。 */
+  subcategories: string[];
   price: { amount: number; currency: string; formatted: string };
   checkoutUrl: string;
   /** Lemon の商品画像（1000×1000）。 */
   image: string | null;
+  /** カードにカーソルを合わせたときに出す2枚目。説明文に貼られた画像から取る。無ければ null。 */
+  hoverImage: string | null;
   publishedAt: string;
   /** テストモードの商品（＝ストア審査前）。 */
   testMode: boolean;
@@ -57,8 +61,31 @@ export function getByCategory(category: string): Product[] {
   return catalog.products.filter((p) => p.category === category);
 }
 
-export function getFeatured(limit = 4): Product[] {
+/** 新着順の先頭から。トップページの「新着」に使う。 */
+export function getLatest(limit = 12): Product[] {
   return catalog.products.slice(0, limit);
+}
+
+/** カテゴリ × サブカテゴリの商品。サブカテゴリのページで使う。 */
+export function getBySubcategory(category: string, sub: string): Product[] {
+  return catalog.products.filter(
+    (p) => p.category === category && p.subcategories.includes(sub),
+  );
+}
+
+/**
+ * カテゴリごとの「サブカテゴリ → 件数」。
+ * ヘッダーのメニューと、サブカテゴリのページを作る対象を決めるのに使う。
+ */
+export function getSubcategoryCounts(): Record<string, Record<string, number>> {
+  const counts: Record<string, Record<string, number>> = {};
+  for (const product of catalog.products) {
+    const forCategory = (counts[product.category] ??= {});
+    for (const sub of product.subcategories) {
+      forCategory[sub] = (forCategory[sub] ?? 0) + 1;
+    }
+  }
+  return counts;
 }
 
 export function getRelated(product: Product, limit = 3): Product[] {

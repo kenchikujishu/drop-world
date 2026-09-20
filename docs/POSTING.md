@@ -39,7 +39,7 @@ Lemon 管理画面 → **Products** → **+ New product**
 | 欄 | 入れるもの |
 | --- | --- |
 | **Name** | **品番 + 半角スペース + 商品名**。例: `DW-PPL-004 Commuters — Morning Rush` |
-| **Description** | 英語の説明文。**最後の2行**に `Figures: 6` と `Formats: DWG, AI` を書く |
+| **Description** | 英語の説明文。**最後に決まった行**（下記）を書く |
 | **Pricing** | Single payment で金額（通貨はストアの設定に従う） |
 | **Media** | 手順1の画像。**1枚目がサイトのサムネイル**になります |
 | **Files** | 販売する zip |
@@ -53,9 +53,18 @@ Outline and fill sit on separate layers, drawn at 1:1 in millimetres.
 
 Figures: 6
 Formats: DWG, AI
+Action: walking, carrying
+View: top, elevation
+Scene: japanese-street
 ```
 
-`Figures` と `Formats` の行は、サイトの仕様表（収録点数・形式）に使われ、本文には出ません。
+最後の決まった行は、サイトの仕様表と分類に使われ、**本文には出ません**。
+
+| 行 | 役割 | 省略 |
+| --- | --- | --- |
+| `Figures: 6` | 収録点数 | 可 |
+| `Formats: DWG, AI` | 収録形式 | 可 |
+| `Action:` / `View:` / `Scene:` | サブカテゴリ（下記） | 可 |
 
 ### 3. Publish する
 
@@ -82,6 +91,7 @@ DW-PPL-004
 | `PPL` | People（人物） |
 | `VEG` | Vegetation（植栽） |
 | `ANM` | Animal（動物） |
+| `FRN` | Furniture（家具） |
 
 **二人で同じ番号を使わないよう、番号の帯を分けます。**
 
@@ -95,6 +105,49 @@ DW-PPL-004
 
 ---
 
+## サブカテゴリ（Action / View / Scene）
+
+メインカテゴリ（品番の記号）とは別に、**3つの軸**で分類します。説明文に行を足すだけです。
+
+| 行 | 軸 | 書ける言葉 |
+| --- | --- | --- |
+| `Action:` | 動作 | `standing` / `sitting` / `walking` / `running` / `climbing-stairs` / `using-tools` / `carrying` / `talking` / `cycling` / `working` |
+| `View:` | 投影法 | `top` / `elevation` / `axonometric` |
+| `Scene:` | シーン | `japanese-street` / `farm` / `hospital` / `office` / `school` / `park` / `station` / `construction-site` / `retail` / `housing` |
+
+### 決まりごと
+
+- **1つの行に複数書ける。** カンマ区切り: `Action: sitting, talking`
+- **迷ったら書かない。** 空でも商品は出ます（そのサブカテゴリのページに載らないだけ）
+- **いろんな投影法をまとめたセット**は、入っているものを全部書く: `View: top, elevation, axonometric`
+  （1つに絞る必要はありません。3つのページすべてに出ます）
+- **表に無い言葉は無視されます**（ビルドのログに警告が出ます）。
+  言葉を増やしたいときは `content/subcategories.json` に1行足す（オーナーに依頼）
+- 大文字・小文字、スペースは気にしなくて大丈夫です。`Japanese Street` → `japanese-street` として扱います
+
+### サイトでの出かた
+
+- ヘッダーの **人物** にカーソルを合わせると、その軸ごとに一覧が出ます
+- `https://drop-world.com/ja/categories/people/sitting` のようなページが自動でできます
+- **商品が1点も無いサブカテゴリのページは作られません**（空のページを検索エンジンに見せないため）
+
+---
+
+## サムネイルの2枚目（カーソルを合わせると切り替わる）
+
+商品一覧のサムネイルは、**カーソルを合わせると2枚目にふわっと切り替わります**。
+
+⚠ Lemon の API は **Media に入れた画像を1枚（サムネイル）しか返しません**。
+そのため2枚目は、次のどちらかの方法で指定します。
+
+1. **説明文に画像を貼る** — 説明文の中に画像を挿入すると、その1枚目を使います
+2. **説明文に URL の行を書く** — `Hover: https://…`（`https://` で始まる画像の URL）
+
+2枚目を入れなかった商品は、カーソルを合わせても何も起きません（1枚目のままです）。
+2枚目は商品ページのプレビューにも並びます。
+
+---
+
 ## よくある操作
 
 | やりたいこと | やり方 |
@@ -103,6 +156,7 @@ DW-PPL-004
 | 画像・説明を直す | Lemon で直すだけ |
 | 販売をやめる | Lemon で Draft に戻す（サイトから消える） |
 | カテゴリを増やす | `content/categories.json` に1行足す（ここだけはコード変更） |
+| サブカテゴリの言葉を増やす | `content/subcategories.json` に1行足す（同上） |
 
 ---
 

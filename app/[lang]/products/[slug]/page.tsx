@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import BuyButton from '@/components/BuyButton';
 import Gallery from '@/components/Gallery';
 import ProductGrid from '@/components/ProductGrid';
-import { LANGS, categoryLabel, type Lang } from '@/content/taxonomy';
+import { LANGS, SUB_AXES, categoryLabel, type Lang } from '@/content/taxonomy';
 import { getDict, href } from '@/lib/i18n';
 import { getAllProducts, getProduct, getRelated } from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
@@ -63,6 +63,12 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
     product.publishedAt ? { label: dict.common.released, value: product.publishedAt } : null,
   ].filter((spec): spec is { label: string; value: string } => spec !== null);
 
+  // サブカテゴリは軸ごとに1行。同じカテゴリの絞り込みページへのリンクにする。
+  const tagRows = SUB_AXES.map((axis) => ({
+    axis,
+    items: axis.items.filter((item) => product.subcategories.includes(item.id)),
+  })).filter((row) => row.items.length > 0);
+
   return (
     <>
       <nav className={`container ${styles.breadcrumb}`} aria-label="Breadcrumb">
@@ -76,7 +82,13 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       <div className={`container ${styles.layout}`}>
         <div className={styles.media}>
           {product.image && (
-            <Gallery images={[product.image]} alt={product.title} label={dict.common.gallery} />
+            <Gallery
+              images={[product.image, product.hoverImage].filter(
+                (src): src is string => Boolean(src),
+              )}
+              alt={product.title}
+              label={dict.common.gallery}
+            />
           )}
         </div>
 
@@ -103,6 +115,21 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
                 <div key={spec.label} className={styles.specRow}>
                   <dt>{spec.label}</dt>
                   <dd className="mono">{spec.value}</dd>
+                </div>
+              ))}
+              {tagRows.map(({ axis, items }) => (
+                <div key={axis.id} className={styles.specRow}>
+                  <dt>{axis.label[lang]}</dt>
+                  <dd className={styles.specLinks}>
+                    {items.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={href(lang, `/categories/${product.category}/${item.id}`)}
+                      >
+                        {item.label[lang]}
+                      </Link>
+                    ))}
+                  </dd>
                 </div>
               ))}
             </dl>

@@ -28,6 +28,20 @@ export default function ProductCard({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={product.image} alt="" width={1000} height={1000} loading="lazy" />
           )}
+          {/* 2枚目があるときだけ、カーソルを合わせるとふわっと切り替わる（CSS の opacity）。
+              タッチ端末では hover が無いので1枚目のまま。 */}
+          {product.hoverImage && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              className={styles.thumbHover}
+              src={product.hoverImage}
+              alt=""
+              width={1000}
+              height={1000}
+              loading="lazy"
+              aria-hidden="true"
+            />
+          )}
         </div>
 
         <div className={styles.body}>

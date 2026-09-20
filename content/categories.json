@@ -1,5 +1,6 @@
 [
   { "id": "people", "code": "PPL", "label": { "en": "People", "ja": "人物" } },
   { "id": "vegetation", "code": "VEG", "label": { "en": "Vegetation", "ja": "植栽" } },
-  { "id": "animal", "code": "ANM", "label": { "en": "Animal", "ja": "動物" } }
+  { "id": "animal", "code": "ANM", "label": { "en": "Animal", "ja": "動物" } },
+  { "id": "furniture", "code": "FRN", "label": { "en": "Furniture", "ja": "家具" } }
 ]

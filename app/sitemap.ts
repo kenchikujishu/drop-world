@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { CATEGORY_IDS, LANGS } from '@/content/taxonomy';
-import { getAllProducts, getCategoryCounts } from '@/lib/products';
+import { getAllProducts, getCategoryCounts, getSubcategoryCounts } from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
 
 /** 静的ページのパス（言語プレフィックスなし）。 */
@@ -20,6 +20,7 @@ const STATIC_PATHS = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const products = getAllProducts();
   const counts = getCategoryCounts();
+  const subCounts = getSubcategoryCounts();
   const now = new Date();
 
   const paths = [
@@ -27,6 +28,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // 商品が無いカテゴリのページは存在しないので載せない
     ...CATEGORY_IDS.filter((category) => (counts[category] ?? 0) > 0).map(
       (category) => `/categories/${category}`,
+    ),
+    // サブカテゴリは商品がある組み合わせだけページがある
+    ...Object.entries(subCounts).flatMap(([category, subs]) =>
+      Object.keys(subs).map((sub) => `/categories/${category}/${sub}`),
     ),
     ...products.map((product) => `/products/${product.slug}`),
   ];

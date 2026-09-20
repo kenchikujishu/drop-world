@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { CATEGORIES, type Lang } from '@/content/taxonomy';
+import { CATEGORIES, SUB_AXES, type Lang } from '@/content/taxonomy';
 import type { Dictionary } from '@/content/i18n/en';
 import { href } from '@/lib/i18n';
 import LangSwitch from './LangSwitch';
@@ -14,9 +14,11 @@ type Props = {
   dict: Dictionary;
   /** 商品が0件のカテゴリはカテゴリ帯に出さない。 */
   categoryCounts: Record<string, number>;
+  /** カテゴリごとの「サブカテゴリ → 件数」。0件のサブカテゴリはメニューに出さない。 */
+  subcategoryCounts: Record<string, Record<string, number>>;
 };
 
-export default function Header({ lang, dict, categoryCounts }: Props) {
+export default function Header({ lang, dict, categoryCounts, subcategoryCounts }: Props) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -34,6 +36,16 @@ export default function Header({ lang, dict, categoryCounts }: Props) {
   ];
 
   const visibleCategories = CATEGORIES.filter((c) => (categoryCounts[c.id] ?? 0) > 0);
+
+  /** そのカテゴリに商品があるサブカテゴリだけを、軸ごとにまとめて返す。 */
+  function subGroupsFor(categoryId: string) {
+    const counts = subcategoryCounts[categoryId] ?? {};
+    return SUB_AXES.map((axis) => ({
+      axis,
+      items: axis.items.filter((item) => (counts[item.id] ?? 0) > 0),
+      counts,
+    })).filter((group) => group.items.length > 0);
+  }
 
   return (
     <header className={styles.header}>
@@ -78,15 +90,40 @@ export default function Header({ lang, dict, categoryCounts }: Props) {
             <Link href={href(lang, '/products')} className={styles.categoryLink}>
               {dict.common.allProducts}
             </Link>
-            {visibleCategories.map((category) => (
-              <Link
-                key={category.id}
-                href={href(lang, `/categories/${category.id}`)}
-                className={styles.categoryLink}
-              >
-                {category.label[lang]}
-              </Link>
-            ))}
+            {visibleCategories.map((category) => {
+              const groups = subGroupsFor(category.id);
+              return (
+                // カーソルを合わせる / キーボードで入るとサブカテゴリの一覧が出る（CSS だけで開く）。
+                <div key={category.id} className={styles.categoryItem}>
+                  <Link
+                    href={href(lang, `/categories/${category.id}`)}
+                    className={styles.categoryLink}
+                  >
+                    {category.label[lang]}
+                  </Link>
+
+                  {groups.length > 0 && (
+                    <div className={styles.subPanel}>
+                      {groups.map(({ axis, items, counts }) => (
+                        <div key={axis.id} className={styles.subGroup}>
+                          <p className={`mono ${styles.subAxis}`}>{axis.label[lang]}</p>
+                          {items.map((item) => (
+                            <Link
+                              key={item.id}
+                              href={href(lang, `/categories/${category.id}/${item.id}`)}
+                              className={styles.subLink}
+                            >
+                              {item.label[lang]}
+                              <span className={`mono ${styles.subCount}`}>{counts[item.id]}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -98,6 +135,31 @@ export default function Header({ lang, dict, categoryCounts }: Props) {
               {link.label}
             </Link>
           ))}
+
+          {/* スマートフォンには hover が無いので、サブカテゴリはこのメニューに並べる。 */}
+          {visibleCategories.map((category) => {
+            const groups = subGroupsFor(category.id);
+            if (groups.length === 0) return null;
+            return (
+              <div key={category.id} className={styles.mobileGroup}>
+                <p className={`mono ${styles.mobileGroupTitle}`}>{category.label[lang]}</p>
+                <div className={styles.mobileSubLinks}>
+                  {groups.flatMap(({ items, counts }) =>
+                    items.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={href(lang, `/categories/${category.id}/${item.id}`)}
+                        className={styles.mobileSubLink}
+                      >
+                        {item.label[lang]}
+                        <span className={`mono ${styles.subCount}`}>{counts[item.id]}</span>
+                      </Link>
+                    )),
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </nav>
       )}
     </header>

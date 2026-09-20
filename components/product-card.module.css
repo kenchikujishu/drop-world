@@ -20,6 +20,7 @@
 }
 
 .thumb {
+  position: relative;
   aspect-ratio: 1 / 1;
   background: var(--paper-2);
   border-bottom: 1px solid var(--line);
@@ -30,6 +31,25 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* 2枚目。既定では透明で、カードにカーソルが乗ったときだけ出す。 */
+.thumbHover {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.link:hover .thumbHover,
+.link:focus-visible .thumbHover {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumbHover {
+    transition: none;
+  }
 }
 
 .body {

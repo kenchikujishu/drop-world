@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { LANGS, isLang, type Lang } from '@/content/taxonomy';
 import { getDict } from '@/lib/i18n';
-import { getCategoryCounts } from '@/lib/products';
+import { getCategoryCounts, getSubcategoryCounts } from '@/lib/products';
 import { absoluteUrl, siteConfig } from '@/lib/site';
 import '../globals.css';
 
@@ -89,7 +89,12 @@ export default async function RootLayout({
           {dict.nav.skipToContent}
         </a>
         <div className="pageShell">
-          <Header lang={lang} dict={dict} categoryCounts={categoryCounts} />
+          <Header
+            lang={lang}
+            dict={dict}
+            categoryCounts={categoryCounts}
+            subcategoryCounts={getSubcategoryCounts()}
+          />
           <main id="main">{children}</main>
           <Footer lang={lang} dict={dict} categoryCounts={categoryCounts} />
         </div>

@@ -122,3 +122,19 @@
     gap: 2rem;
   }
 }
+
+/* サブカテゴリの行（仕様表の中）。 */
+.specLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.875rem;
+}
+
+.specLinks a {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.specLinks a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}

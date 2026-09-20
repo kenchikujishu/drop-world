@@ -94,8 +94,16 @@
   align-items: center;
   gap: 1.25rem;
   height: 44px;
+  /* スマートフォンでは横スクロール。デスクトップでは overflow を切る
+     （切らないとサブカテゴリのパネルが帯の外に出られず、切り取られる）。 */
   overflow-x: auto;
   scrollbar-width: none;
+}
+
+@media (min-width: 861px) {
+  .categoryScroller {
+    overflow: visible;
+  }
 }
 
 .categoryScroller::-webkit-scrollbar {
@@ -117,6 +125,71 @@
   color: var(--accent);
 }
 
+/* ---- カテゴリのサブメニュー ---- */
+
+.categoryItem {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.subPanel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: -1rem;
+  z-index: 50;
+  gap: 2rem;
+  min-width: 17rem;
+  padding: 1.25rem 1.5rem 1.375rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: none;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 7%);
+}
+
+/* カーソルを合わせたとき、キーボードで中に入ったとき。 */
+.categoryItem:hover .subPanel,
+.categoryItem:focus-within .subPanel {
+  display: flex;
+}
+
+.subGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 7.5rem;
+}
+
+.subAxis {
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+  margin-bottom: 0.125rem;
+}
+
+.subLink {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: var(--step--1);
+  color: var(--ink-70);
+  white-space: nowrap;
+}
+
+.subLink:hover {
+  color: var(--accent);
+}
+
+.subCount {
+  font-size: 0.625rem;
+  color: var(--ink-30);
+}
+
 /* ---- モバイルメニュー ---- */
 
 .mobileMenu {
@@ -132,9 +205,43 @@
   font-size: var(--step-0);
 }
 
+/* ---- モバイルメニューのカテゴリ ---- */
+
+.mobileGroup {
+  padding: 0.9375rem var(--page-pad) 1.125rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.mobileGroupTitle {
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+}
+
+.mobileSubLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.mobileSubLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  font-size: var(--step--1);
+  color: var(--ink-70);
+}
+
 @media (max-width: 860px) {
   .desktopNav {
     display: none;
+  }
+
+  /* スマートフォンでは帯からは開かない（メニュー側に並べている）。 */
+  .subPanel {
+    display: none !important;
   }
 
   .menuButton {

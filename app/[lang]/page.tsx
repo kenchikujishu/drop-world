@@ -2,17 +2,16 @@ import Link from 'next/link';
 import ProductGrid from '@/components/ProductGrid';
 import { CATEGORIES, type Lang } from '@/content/taxonomy';
 import { getDict, href } from '@/lib/i18n';
-import { getCategoryCounts, getFeatured } from '@/lib/products';
+import { getCategoryCounts, getLatest } from '@/lib/products';
 import styles from './home.module.css';
 
 export default async function HomePage({ params }: { params: Promise<{ lang: Lang }> }) {
   const { lang } = await params;
   const dict = getDict(lang);
-  const featured = getFeatured(4);
+  const latest = getLatest(12);
   const counts = getCategoryCounts();
   // 商品が1点も無いカテゴリは出さない（空のページに誘導しないため）
   const categories = CATEGORIES.filter((category) => (counts[category.id] ?? 0) > 0);
-  const stripProducts = featured.filter((product) => product.image);
 
   return (
     <>
@@ -30,37 +29,21 @@ export default async function HomePage({ params }: { params: Promise<{ lang: Lan
             </Link>
           </div>
         </div>
-
-        {stripProducts.length > 0 && (
-          <div className={`container ${styles.heroStrip}`}>
-            {stripProducts.map((product) => (
-              <Link
-                key={product.slug}
-                href={href(lang, `/products/${product.slug}`)}
-                className={styles.stripTile}
-                aria-label={product.title}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={product.image ?? ''} alt="" width={600} height={600} />
-              </Link>
-            ))}
-          </div>
-        )}
       </section>
 
-      {/* ---- 新着 ---- */}
-      {featured.length > 0 && (
+      {/* ---- 新着（新しい順に12点） ---- */}
+      {latest.length > 0 && (
         <section className={`container ${styles.section}`}>
           <div className={styles.sectionHead}>
             <div>
-              <h2 className={styles.sectionTitle}>{dict.home.featuredTitle}</h2>
-              <p className={styles.sectionLead}>{dict.home.featuredLead}</p>
+              <h2 className={styles.sectionTitle}>{dict.home.latestTitle}</h2>
+              <p className={styles.sectionLead}>{dict.home.latestLead}</p>
             </div>
             <Link href={href(lang, '/products')} className={styles.sectionLink}>
               {dict.common.browseAll} →
             </Link>
           </div>
-          <ProductGrid products={featured} lang={lang} dict={dict} />
+          <ProductGrid products={latest} lang={lang} dict={dict} />
         </section>
       )}
 

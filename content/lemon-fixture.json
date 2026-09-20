@@ -1,8 +1,11 @@
 {
-  "_comment": "API キーが無いときに npm run dev で使う見本データ。本番のビルドでは使われない。Lemon API の返り値と同じ形にしてあるので、取り込み処理（下書き・品番なしの除外など）の確認にも使う。",
+  "_comment": "API キーが無いときに npm run dev で使う見本データ。本番のビルドでは使われない。Lemon API の返り値と同じ形にしてあるので、取り込み処理（下書き・品番なしの除外、サブカテゴリの解釈）の確認にも使う。",
   "store": {
     "id": "0",
-    "attributes": { "name": "drop world (fixture)", "currency": "USD" }
+    "attributes": {
+      "name": "drop world (fixture)",
+      "currency": "USD"
+    }
   },
   "products": [
     {
@@ -10,13 +13,28 @@
       "attributes": {
         "name": "DW-PPL-000 Sample Product",
         "status": "published",
-        "description": "<p>Sample product for local development. It never appears on the live site.</p><p>Figures: 1</p><p>Formats: DWG, AI</p>",
+        "description": "<p>Sample product for local development. It never appears on the live site.</p><p>Figures: 1</p><p>Formats: DWG, AI</p><p>Action: sitting, talking</p><p>View: top, elevation</p><p>Scene: japanese-street</p>",
         "price": 999,
         "price_formatted": "$9.99",
         "buy_now_url": "https://example.com/checkout/sample",
         "large_thumb_url": null,
         "created_at": "2026-09-15T00:00:00.000000Z",
         "updated_at": "2026-09-15T00:00:00.000000Z",
+        "test_mode": true
+      }
+    },
+    {
+      "id": "fixture-furniture",
+      "attributes": {
+        "name": "DW-FRN-000 Sample Furniture",
+        "status": "published",
+        "description": "<p>Second sample, used to check a category other than people.</p><p>Figures: 4</p><p>Formats: DWG</p><p>View: top</p><p>Scene: office</p>",
+        "price": 1499,
+        "price_formatted": "$14.99",
+        "buy_now_url": "https://example.com/checkout/furniture",
+        "large_thumb_url": null,
+        "created_at": "2026-09-16T00:00:00.000000Z",
+        "updated_at": "2026-09-16T00:00:00.000000Z",
         "test_mode": true
       }
     },
