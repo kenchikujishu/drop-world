@@ -35,16 +35,13 @@ export default function Header({ lang, dict, categoryCounts, subcategoryCounts }
     { href: href(lang, '/contact'), label: dict.nav.contact },
   ];
 
-  const visibleCategories = CATEGORIES.filter((c) => (categoryCounts[c.id] ?? 0) > 0);
-
-  /** そのカテゴリに商品があるサブカテゴリだけを、軸ごとにまとめて返す。 */
+  /**
+   * カテゴリもサブカテゴリも、**商品が0件でもメニューには出す**（オーナーの指示、2026-09-21）。
+   * ただし0件のものはページが存在しないので、リンクにせず淡色のテキストにする（404 に飛ばさないため）。
+   */
   function subGroupsFor(categoryId: string) {
     const counts = subcategoryCounts[categoryId] ?? {};
-    return SUB_AXES.map((axis) => ({
-      axis,
-      items: axis.items.filter((item) => (counts[item.id] ?? 0) > 0),
-      counts,
-    })).filter((group) => group.items.length > 0);
+    return SUB_AXES.map((axis) => ({ axis, items: axis.items, counts }));
   }
 
   return (
@@ -84,49 +81,58 @@ export default function Header({ lang, dict, categoryCounts, subcategoryCounts }
         </div>
       </div>
 
-      {visibleCategories.length > 0 && (
-        <div className={styles.categoryRow}>
-          <div className={`container ${styles.categoryScroller}`}>
-            <Link href={href(lang, '/products')} className={styles.categoryLink}>
-              {dict.common.allProducts}
-            </Link>
-            {visibleCategories.map((category) => {
-              const groups = subGroupsFor(category.id);
-              return (
-                // カーソルを合わせる / キーボードで入るとサブカテゴリの一覧が出る（CSS だけで開く）。
-                <div key={category.id} className={styles.categoryItem}>
+      <div className={styles.categoryRow}>
+        <div className={`container ${styles.categoryScroller}`}>
+          <Link href={href(lang, '/products')} className={styles.categoryLink}>
+            {dict.common.allProducts}
+          </Link>
+          {CATEGORIES.map((category) => {
+            const hasProducts = (categoryCounts[category.id] ?? 0) > 0;
+            return (
+              // カーソルを合わせる / キーボードで入るとサブカテゴリの一覧が出る（CSS だけで開く）。
+              <div key={category.id} className={styles.categoryItem}>
+                {hasProducts ? (
                   <Link
                     href={href(lang, `/categories/${category.id}`)}
                     className={styles.categoryLink}
                   >
                     {category.label[lang]}
                   </Link>
+                ) : (
+                  <span className={`${styles.categoryLink} ${styles.empty}`}>
+                    {category.label[lang]}
+                  </span>
+                )}
 
-                  {groups.length > 0 && (
-                    <div className={styles.subPanel}>
-                      {groups.map(({ axis, items, counts }) => (
-                        <div key={axis.id} className={styles.subGroup}>
-                          <p className={`mono ${styles.subAxis}`}>{axis.label[lang]}</p>
-                          {items.map((item) => (
-                            <Link
-                              key={item.id}
-                              href={href(lang, `/categories/${category.id}/${item.id}`)}
-                              className={styles.subLink}
-                            >
-                              {item.label[lang]}
-                              <span className={`mono ${styles.subCount}`}>{counts[item.id]}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      ))}
+                <div className={styles.subPanel}>
+                  {subGroupsFor(category.id).map(({ axis, items, counts }) => (
+                    <div key={axis.id} className={styles.subGroup}>
+                      <p className={`mono ${styles.subAxis}`}>{axis.label[lang]}</p>
+                      {items.map((item) => {
+                        const count = counts[item.id] ?? 0;
+                        return count > 0 ? (
+                          <Link
+                            key={item.id}
+                            href={href(lang, `/categories/${category.id}/${item.id}`)}
+                            className={styles.subLink}
+                          >
+                            {item.label[lang]}
+                            <span className={`mono ${styles.subCount}`}>{count}</span>
+                          </Link>
+                        ) : (
+                          <span key={item.id} className={`${styles.subLink} ${styles.empty}`}>
+                            {item.label[lang]}
+                          </span>
+                        );
+                      })}
                     </div>
-                  )}
+                  ))}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
 
       {menuOpen && (
         <nav id="mobile-menu" className={styles.mobileMenu} aria-label={dict.nav.menu}>
@@ -137,29 +143,32 @@ export default function Header({ lang, dict, categoryCounts, subcategoryCounts }
           ))}
 
           {/* スマートフォンには hover が無いので、サブカテゴリはこのメニューに並べる。 */}
-          {visibleCategories.map((category) => {
-            const groups = subGroupsFor(category.id);
-            if (groups.length === 0) return null;
-            return (
-              <div key={category.id} className={styles.mobileGroup}>
-                <p className={`mono ${styles.mobileGroupTitle}`}>{category.label[lang]}</p>
-                <div className={styles.mobileSubLinks}>
-                  {groups.flatMap(({ items, counts }) =>
-                    items.map((item) => (
+          {CATEGORIES.map((category) => (
+            <div key={category.id} className={styles.mobileGroup}>
+              <p className={`mono ${styles.mobileGroupTitle}`}>{category.label[lang]}</p>
+              <div className={styles.mobileSubLinks}>
+                {subGroupsFor(category.id).flatMap(({ items, counts }) =>
+                  items.map((item) => {
+                    const count = counts[item.id] ?? 0;
+                    return count > 0 ? (
                       <Link
                         key={item.id}
                         href={href(lang, `/categories/${category.id}/${item.id}`)}
                         className={styles.mobileSubLink}
                       >
                         {item.label[lang]}
-                        <span className={`mono ${styles.subCount}`}>{counts[item.id]}</span>
+                        <span className={`mono ${styles.subCount}`}>{count}</span>
                       </Link>
-                    )),
-                  )}
-                </div>
+                    ) : (
+                      <span key={item.id} className={`${styles.mobileSubLink} ${styles.empty}`}>
+                        {item.label[lang]}
+                      </span>
+                    );
+                  }),
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </nav>
       )}
     </header>

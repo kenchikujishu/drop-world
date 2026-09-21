@@ -190,6 +190,12 @@
   color: var(--ink-30);
 }
 
+/* まだ商品が無いカテゴリ / サブカテゴリ。ページが無いのでリンクにしない。 */
+.empty {
+  color: var(--ink-30);
+  cursor: default;
+}
+
 /* ---- モバイルメニュー ---- */
 
 .mobileMenu {
