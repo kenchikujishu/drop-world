@@ -41,6 +41,7 @@ export const en = {
     view: 'View',
     category: 'Category',
     allProducts: 'All products',
+    scenes: 'Scenes',
     browseAll: 'Browse all products',
     results: 'products',
     noResults: 'No products match these filters yet.',
@@ -116,8 +117,14 @@ export const en = {
     empty: 'New sets are on the way. Please check back soon.',
   },
 
-  categoryPage: {
-    leadPrefix: 'CAD entourage in the category',
+  browse: {
+    leadPrefix: 'CAD entourage',
+    filterBy: 'Filter',
+    scenesTitle: 'Scenes',
+    scenesLead: 'Sets grouped by where they are used. Subjects are mixed.',
+    sceneSet: 'Scene set',
+    inScene: 'Sets drawn for this scene',
+    empty: 'Nothing here yet. New sets are added as they are drawn.',
   },
 
   product: {

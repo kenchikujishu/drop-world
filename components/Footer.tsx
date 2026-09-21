@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CATEGORIES, type Lang } from '@/content/taxonomy';
+import { SUBJECTS, type Lang } from '@/content/taxonomy';
 import type { Dictionary } from '@/content/i18n/en';
 import { href } from '@/lib/i18n';
 import { siteConfig } from '@/lib/site';
@@ -8,11 +8,13 @@ import styles from './footer.module.css';
 type Props = {
   lang: Lang;
   dict: Dictionary;
-  categoryCounts: Record<string, number>;
+  /** 商品が0件の被写体はフッターには出さない（ページが無いため）。 */
+  subjectCounts: Record<string, number>;
+  hasScenes: boolean;
 };
 
-export default function Footer({ lang, dict, categoryCounts }: Props) {
-  const visibleCategories = CATEGORIES.filter((c) => (categoryCounts[c.id] ?? 0) > 0);
+export default function Footer({ lang, dict, subjectCounts, hasScenes }: Props) {
+  const visibleSubjects = SUBJECTS.filter((s) => (subjectCounts[s.id] ?? 0) > 0);
 
   return (
     <footer className={styles.footer}>
@@ -28,11 +30,12 @@ export default function Footer({ lang, dict, categoryCounts }: Props) {
         <nav className={styles.column} aria-label={dict.footer.shopHeading}>
           <h2 className="kicker">{dict.footer.shopHeading}</h2>
           <Link href={href(lang, '/products')}>{dict.common.allProducts}</Link>
-          {visibleCategories.map((category) => (
-            <Link key={category.id} href={href(lang, `/categories/${category.id}`)}>
-              {category.label[lang]}
+          {visibleSubjects.map((subject) => (
+            <Link key={subject.id} href={href(lang, `/${subject.id}`)}>
+              {subject.label[lang]}
             </Link>
           ))}
+          {hasScenes && <Link href={href(lang, '/scenes')}>{dict.common.scenes}</Link>}
         </nav>
 
         <nav className={styles.column} aria-label={dict.footer.infoHeading}>

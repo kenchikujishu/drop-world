@@ -185,3 +185,14 @@
     gap: 0.75rem;
   }
 }
+
+/* まだ商品が無い被写体のタイル。ページが無いのでリンクにしない。 */
+.categoryTileEmpty {
+  color: var(--ink-30);
+  cursor: default;
+}
+
+.categoryTileEmpty:hover {
+  border-color: var(--line);
+  color: var(--ink-30);
+}

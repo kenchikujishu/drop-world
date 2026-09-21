@@ -28,48 +28,85 @@ import path from 'node:path';
 const ROOT = process.cwd();
 const OUT_FILE = path.join(ROOT, 'content', 'catalog.generated.json');
 const FIXTURE_FILE = path.join(ROOT, 'content', 'lemon-fixture.json');
-const CATEGORIES = JSON.parse(
-  fs.readFileSync(path.join(ROOT, 'content', 'categories.json'), 'utf-8'),
+const TAXONOMY = JSON.parse(
+  fs.readFileSync(path.join(ROOT, 'content', 'taxonomy.json'), 'utf-8'),
 );
-const SUB_AXES = JSON.parse(
-  fs.readFileSync(path.join(ROOT, 'content', 'subcategories.json'), 'utf-8'),
-).axes;
+const TAGS_FILE = path.join(ROOT, 'content', 'tags.json');
+const TAGS = JSON.parse(fs.readFileSync(TAGS_FILE, 'utf-8')).tags ?? {};
+
+/** 品番の記号 → 主な被写体（DW-PPL-001 なら people）。 */
+const PACK_CODES = TAXONOMY.packCodes;
+/** タグに書ける軸。contains / origin / action / scene / views */
+const AXIS_IDS = TAXONOMY.axes.map((axis) => axis.id);
 
 /** 「Japanese Street」「axono」のような書き方のゆれを id に寄せる。 */
 function normalizeTag(value) {
   return String(value).trim().toLowerCase().replace(/[\s_]+/g, '-');
 }
 
-/** 軸ごとに「書かれうる語 → id」の表を作る（id 本体・別名の両方を入れる）。 */
-const SUB_LOOKUP = SUB_AXES.map((axis) => {
-  const terms = new Map();
-  for (const item of axis.items) {
-    terms.set(normalizeTag(item.id), item.id);
-    for (const alias of item.aliases ?? []) terms.set(normalizeTag(alias), item.id);
-  }
-  return {
-    id: axis.id,
-    keyword: axis.keyword,
-    // 説明文の行頭に書ける見出し。「Scene:」「シーン:」など
-    linePattern: new RegExp(
-      `^(${[axis.keyword, ...(axis.keywordAliases ?? [])].join('|')})\\s*[:：]\\s*(.+)$`,
-      'i',
-    ),
-    terms,
-    options: axis.items.map((item) => item.id),
-  };
-});
+/** 軸ごとに「書かれうる語 → id」の表（id 本体と別名の両方）。 */
+const TERMS = Object.fromEntries(
+  TAXONOMY.axes.map((axis) => {
+    const map = new Map();
+    for (const item of axis.items) {
+      map.set(normalizeTag(item.id), item.id);
+      for (const alias of item.aliases ?? []) map.set(normalizeTag(alias), item.id);
+    }
+    return [axis.id, { map, options: axis.items.map((item) => item.id) }];
+  }),
+);
 
-// id が全軸で重複していると、どの軸の語か決められなくなる。
-{
-  const ids = SUB_AXES.flatMap((axis) => axis.items.map((item) => item.id));
-  const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
-  if (dup.length > 0) {
+/**
+ * content/tags.json を content/taxonomy.json に照らして検証し、品番 → タグ の表にする。
+ * 打ち間違いや未定義の値があれば**ビルドを止める**（間違った分類のまま公開しないため）。
+ * 図の個別 ID（items）は語彙を持たないので、そのまま通す。
+ */
+function loadTags(rawTags) {
+  const errors = [];
+  const resolved = new Map();
+
+  for (const [sku, raw] of Object.entries(rawTags)) {
+    if (!/^DW-[A-Z]{3}-\d{3}$/.test(sku)) {
+      errors.push(`品番「${sku}」の形は DW-PPL-001 の形式にしてください`);
+      continue;
+    }
+    if (!PACK_CODES[sku.slice(3, 6)]) {
+      errors.push(`品番「${sku}」の記号 ${sku.slice(3, 6)} は未定義です（${Object.keys(PACK_CODES).join(' / ')}）`);
+      continue;
+    }
+
+    const entry = {};
+    for (const [axisId, values] of Object.entries(raw)) {
+      if (axisId === 'items') {
+        entry.items = [].concat(values ?? []).map(String);
+        continue;
+      }
+      if (!AXIS_IDS.includes(axisId)) {
+        errors.push(`${sku}: 「${axisId}」という分類はありません（使えるのは ${AXIS_IDS.join(' / ')} / items）`);
+        continue;
+      }
+      const { map, options } = TERMS[axisId];
+      entry[axisId] = [];
+      for (const value of [].concat(values ?? [])) {
+        const id = map.get(normalizeTag(value));
+        if (!id) {
+          errors.push(`${sku}: ${axisId} の「${value}」は content/taxonomy.json にありません（使えるのは ${options.join(' / ')}）`);
+          continue;
+        }
+        if (!entry[axisId].includes(id)) entry[axisId].push(id);
+      }
+    }
+    resolved.set(sku, entry);
+  }
+
+  if (errors.length > 0) {
     throw new Error(
-      `content/subcategories.json の id が重複しています: ${[...new Set(dup)].join(', ')}`,
+      ['content/tags.json に直すところがあります:', ...errors.map((e) => `  · ${e}`)].join('\n'),
     );
   }
+  return resolved;
 }
+
 // テスト用に差し替えられるようにしてある。通常は触らない。
 const API_BASE = (process.env.LEMONSQUEEZY_API_BASE ?? 'https://api.lemonsqueezy.com/v1').replace(
   /\/$/,
@@ -94,6 +131,8 @@ async function main() {
   let storeName;
   let currency;
   let rawProducts;
+  // 見本データのときは、見本ファイルの中に書いたタグを使う（content/tags.json は本物の商品用）。
+  let rawTags = TAGS;
 
   if (key) {
     const store = await resolveStore(key);
@@ -106,6 +145,7 @@ async function main() {
     storeName = fixture.store.attributes.name;
     currency = fixture.store.attributes.currency;
     rawProducts = fixture.products;
+    rawTags = fixture.tags ?? {};
     source = 'fixture';
     console.warn(
       '⚠ LEMONSQUEEZY_API_KEY が無いので、見本データ（content/lemon-fixture.json）で表示します。',
@@ -122,7 +162,7 @@ async function main() {
     );
   }
 
-  const { products, skipped, warnings } = normalize(rawProducts, currency);
+  const { products, skipped, warnings } = normalize(rawProducts, currency, rawTags);
 
   if (CHECK) {
     printTable({ products, skipped, warnings, source, storeName });
@@ -227,8 +267,9 @@ async function fetchAllProducts(key, storeId) {
 /* Lemon の商品 → サイトの商品                                           */
 /* ------------------------------------------------------------------ */
 
-function normalize(rawProducts, currency) {
-  const codeToCategory = Object.fromEntries(CATEGORIES.map((c) => [c.code, c.id]));
+function normalize(rawProducts, currency, rawTags) {
+  const tags = loadTags(rawTags);
+  const seenSkus = new Set();
   const skipped = [];
   const warnings = [];
   const bySku = new Map();
@@ -250,37 +291,54 @@ function normalize(rawProducts, currency) {
     }
 
     const [, sku, code, , title] = match;
-    const category = codeToCategory[code];
-    if (!category) {
-      skipped.push({ name, reason: `カテゴリ記号 ${code} が未定義` });
+    const primary = PACK_CODES[code];
+    if (!primary) {
+      skipped.push({ name, reason: `品番の記号 ${code} が未定義` });
       warnings.push(
-        `「${name}」: カテゴリ記号 ${code} は使えません（使えるのは ${Object.keys(codeToCategory).join(' / ')}）`,
+        `「${name}」: 品番の記号 ${code} は使えません（使えるのは ${Object.keys(PACK_CODES).join(' / ')}）`,
       );
       continue;
     }
+    seenSkus.add(sku);
+
+    // 分類は content/tags.json が正。書かれていなければ、品番の記号から決まる被写体だけが付く。
+    const tag = tags.get(sku) ?? {};
+    const contains = tag.contains?.length
+      ? tag.contains
+      : primary === 'scene'
+        ? []
+        : [primary];
 
     if (!a.buy_now_url) {
       skipped.push({ name, reason: '購入リンクが無い' });
       continue;
     }
 
-    const { paragraphs, figures, formats, hoverImage, subcategories, unknownTags } =
-      parseDescription(a.description);
-    for (const { axis, value, options } of unknownTags) {
+    const { paragraphs, figures, formats, hoverImage, strayTagLines } = parseDescription(
+      a.description,
+    );
+    for (const line of strayTagLines) {
       warnings.push(
-        `${sku}: ${axis} の「${value}」は登録されていません（使えるのは ${options.join(' / ')}）`,
+        `${sku}: 説明文の「${line}」は使いません。分類は content/tags.json で管理します（docs/POSTING.md）`,
       );
     }
     const product = {
       sku,
       slug: sku.toLowerCase(),
-      category,
+      /** 品番の記号（PPL / FUR / SCN …）。 */
+      packCode: code,
+      /** 含まれる被写体。シーンパックは複数。 */
+      contains,
+      origin: tag.origin ?? [],
+      action: tag.action ?? [],
+      scene: tag.scene ?? [],
+      views: tag.views ?? [],
+      items: tag.items ?? [],
       title,
       summary: paragraphs[0] ?? '',
       paragraphs,
       figures,
       formats,
-      subcategories,
       price: {
         amount: Number(a.price ?? 0) / 100,
         currency,
@@ -307,6 +365,12 @@ function normalize(rawProducts, currency) {
       if (existing.updatedAt >= product.updatedAt) continue;
     }
     bySku.set(sku, product);
+  }
+
+  for (const sku of tags.keys()) {
+    if (!seenSkus.has(sku)) {
+      warnings.push(`content/tags.json の ${sku} に対応する商品が Lemon にありません（下書きのままか、品番違い）`);
+    }
   }
 
   const products = [...bySku.values()]
@@ -344,8 +408,8 @@ function parseDescription(html) {
   const paragraphs = [];
   let figures = null;
   let formats = [];
-  const subcategories = [];
-  const unknownTags = [];
+  // 旧方式（説明文に Action: などを書く）の名残。本文に出さず、警告だけ出す。
+  const strayTagLines = [];
 
   for (const line of text.split('\n').map((l) => l.trim()).filter(Boolean)) {
     const figuresLine = line.match(/^(figures|点数)\s*[:：]\s*(\d+)/i);
@@ -358,18 +422,9 @@ function parseDescription(html) {
       if (/^https:\/\//i.test(hoverLine[2])) hoverImage = hoverLine[2];
       continue;
     }
-    // Action: / View: / Scene: の行。1行に複数書ける（カンマ・読点・スラッシュ区切り）。
-    const axis = SUB_LOOKUP.find((a) => a.linePattern.test(line));
-    if (axis) {
-      const [, , values] = line.match(axis.linePattern);
-      for (const value of values.split(/[,、/]+/).map((v) => v.trim()).filter(Boolean)) {
-        const id = axis.terms.get(normalizeTag(value));
-        if (id) {
-          if (!subcategories.includes(id)) subcategories.push(id);
-        } else {
-          unknownTags.push({ axis: axis.keyword, value, options: axis.options });
-        }
-      }
+    // 旧方式で書かれた分類の行。読み飛ばして警告する（分類は content/tags.json）。
+    if (/^(action|view|views|scene|contains|origin|動作|投影|投影法|シーン)\s*[:：]/i.test(line)) {
+      strayTagLines.push(line);
       continue;
     }
     const formatsLine = line.match(/^(formats|形式)\s*[:：]\s*(.+)$/i);
@@ -383,12 +438,7 @@ function parseDescription(html) {
     paragraphs.push(line);
   }
 
-  // JSON に書いてある順（軸 → 語）に並べる。表示の順序を安定させるため。
-  const ordered = SUB_AXES.flatMap((axis) => axis.items.map((item) => item.id)).filter((id) =>
-    subcategories.includes(id),
-  );
-
-  return { paragraphs, figures, formats, hoverImage, subcategories: ordered, unknownTags };
+  return { paragraphs, figures, formats, hoverImage, strayTagLines };
 }
 
 function printTable({ products, skipped, warnings, source, storeName }) {
@@ -396,10 +446,11 @@ function printTable({ products, skipped, warnings, source, storeName }) {
   console.log(`サイトに出る商品: ${products.length} 点\n`);
   for (const p of products) {
     console.log(
-      `  ${p.sku}  ${p.price.formatted.padStart(8)}  ${p.category.padEnd(10)}  ${p.title}` +
+      `  ${p.sku}  ${p.price.formatted.padStart(8)}  ${p.title}` +
         `${p.figures ? `  (${p.figures} figures)` : ''}${p.testMode ? '  [test]' : ''}`,
     );
-    if (p.subcategories.length > 0) console.log(`            ${p.subcategories.join(' · ')}`);
+    const tags = [...p.contains, ...p.origin, ...p.action, ...p.scene, ...p.views];
+    if (tags.length > 0) console.log(`            ${tags.join(' · ')}`);
   }
   if (skipped.length > 0) {
     console.log('\nサイトに出さない商品:');

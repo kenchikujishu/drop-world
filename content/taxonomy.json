@@ -1,0 +1,73 @@
+{
+  "_comment": "分類の語彙。ここに無い値を content/tags.json に書くとビルドが失敗する。値を増やすときはここに1行足す。packCodes は品番の記号（DW-PPL-001 の PPL）→ そのパックの主な被写体。",
+
+  "packCodes": {
+    "PPL": "people",
+    "FUR": "furniture",
+    "VEG": "vegetation",
+    "ANM": "animal",
+    "SCN": "scene"
+  },
+
+  "axes": [
+    {
+      "id": "contains",
+      "label": { "en": "Subject", "ja": "被写体" },
+      "nav": true,
+      "items": [
+        { "id": "people", "label": { "en": "People", "ja": "人物" } },
+        { "id": "furniture", "label": { "en": "Furniture", "ja": "家具" } },
+        { "id": "vegetation", "label": { "en": "Vegetation", "ja": "植栽" } },
+        { "id": "animal", "label": { "en": "Animal", "ja": "動物" } }
+      ]
+    },
+    {
+      "id": "origin",
+      "label": { "en": "Origin", "ja": "地域" },
+      "items": [
+        { "id": "japanese", "label": { "en": "Japanese", "ja": "日本" }, "aliases": ["japan", "jp"] }
+      ]
+    },
+    {
+      "id": "action",
+      "label": { "en": "Action", "ja": "動作" },
+      "items": [
+        { "id": "standing", "label": { "en": "Standing", "ja": "立つ" } },
+        { "id": "walking", "label": { "en": "Walking", "ja": "歩く" } },
+        { "id": "running", "label": { "en": "Running", "ja": "走る" } },
+        { "id": "sitting", "label": { "en": "Sitting", "ja": "座る" } },
+        { "id": "cycling", "label": { "en": "Cycling", "ja": "自転車に乗る" }, "aliases": ["bicycle"] },
+        { "id": "climbing-stairs", "label": { "en": "Climbing stairs", "ja": "階段を昇る" }, "aliases": ["stairs"] },
+        { "id": "using-tools", "label": { "en": "Using tools", "ja": "道具を使う" }, "aliases": ["tools"] },
+        { "id": "carrying", "label": { "en": "Carrying", "ja": "運ぶ" } },
+        { "id": "talking", "label": { "en": "Talking", "ja": "話す" } }
+      ]
+    },
+    {
+      "id": "scene",
+      "label": { "en": "Scene", "ja": "シーン" },
+      "nav": true,
+      "items": [
+        { "id": "street", "label": { "en": "Street", "ja": "街路" } },
+        { "id": "park", "label": { "en": "Park", "ja": "公園" } },
+        { "id": "station", "label": { "en": "Station", "ja": "駅" } },
+        { "id": "school", "label": { "en": "School", "ja": "学校" } },
+        { "id": "hospital", "label": { "en": "Hospital", "ja": "病院" } },
+        { "id": "office", "label": { "en": "Office", "ja": "オフィス" } },
+        { "id": "farm", "label": { "en": "Farm", "ja": "農場" } },
+        { "id": "construction-site", "label": { "en": "Construction site", "ja": "工事現場" }, "aliases": ["construction"] },
+        { "id": "retail", "label": { "en": "Retail", "ja": "商業施設" }, "aliases": ["shop"] },
+        { "id": "housing", "label": { "en": "Housing", "ja": "住宅" }, "aliases": ["house"] }
+      ]
+    },
+    {
+      "id": "views",
+      "label": { "en": "View", "ja": "投影法" },
+      "items": [
+        { "id": "plan", "label": { "en": "Plan", "ja": "平面" }, "aliases": ["top", "top-view"] },
+        { "id": "elevation", "label": { "en": "Elevation", "ja": "立面" }, "aliases": ["front", "side"] },
+        { "id": "axo", "label": { "en": "Axo", "ja": "アクソメ" }, "aliases": ["axono", "axonometric", "iso", "isometric"] }
+      ]
+    }
+  ]
+}

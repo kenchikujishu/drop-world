@@ -13,7 +13,7 @@
       "attributes": {
         "name": "DW-PPL-000 Sample Product",
         "status": "published",
-        "description": "<p>Sample product for local development. It never appears on the live site.</p><p>Figures: 1</p><p>Formats: DWG, AI</p><p>Action: sitting, talking</p><p>View: top, elevation</p><p>Scene: japanese-street</p>",
+        "description": "<p>Sample product for local development. It never appears on the live site.</p><p>Figures: 1</p><p>Formats: DWG, AI</p>",
         "price": 999,
         "price_formatted": "$9.99",
         "buy_now_url": "https://example.com/checkout/sample",
@@ -26,15 +26,30 @@
     {
       "id": "fixture-furniture",
       "attributes": {
-        "name": "DW-FRN-000 Sample Furniture",
+        "name": "DW-FUR-000 Sample Furniture",
         "status": "published",
-        "description": "<p>Second sample, used to check a category other than people.</p><p>Figures: 4</p><p>Formats: DWG</p><p>View: top</p><p>Scene: office</p>",
+        "description": "<p>Second sample, used to check a category other than people.</p><p>Figures: 4</p><p>Formats: DWG</p>",
         "price": 1499,
         "price_formatted": "$14.99",
         "buy_now_url": "https://example.com/checkout/furniture",
         "large_thumb_url": null,
         "created_at": "2026-09-16T00:00:00.000000Z",
         "updated_at": "2026-09-16T00:00:00.000000Z",
+        "test_mode": true
+      }
+    },
+    {
+      "id": "fixture-scene",
+      "attributes": {
+        "name": "DW-SCN-000 Sample Scene Pack",
+        "status": "published",
+        "description": "<p>Third sample: a scene pack that mixes subjects.</p><p>Figures: 12</p><p>Formats: DWG, AI</p>",
+        "price": 2900,
+        "price_formatted": "$29.00",
+        "buy_now_url": "https://example.com/checkout/scene",
+        "large_thumb_url": null,
+        "created_at": "2026-09-17T00:00:00.000000Z",
+        "updated_at": "2026-09-17T00:00:00.000000Z",
         "test_mode": true
       }
     },
@@ -68,5 +83,62 @@
         "test_mode": true
       }
     }
-  ]
+  ],
+  "tags": {
+    "DW-PPL-000": {
+      "contains": [
+        "people"
+      ],
+      "origin": [
+        "japanese"
+      ],
+      "action": [
+        "walking",
+        "sitting"
+      ],
+      "scene": [
+        "street"
+      ],
+      "views": [
+        "plan",
+        "elevation"
+      ],
+      "items": [
+        "jp-walk-umbrella-01"
+      ]
+    },
+    "DW-FUR-000": {
+      "contains": [
+        "furniture"
+      ],
+      "scene": [
+        "office"
+      ],
+      "views": [
+        "plan"
+      ]
+    },
+    "DW-SCN-000": {
+      "contains": [
+        "people",
+        "furniture",
+        "vegetation"
+      ],
+      "origin": [
+        "japanese"
+      ],
+      "action": [
+        "walking",
+        "sitting"
+      ],
+      "scene": [
+        "street"
+      ],
+      "views": [
+        "plan",
+        "elevation",
+        "axo"
+      ]
+    }
+  }
 }

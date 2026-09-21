@@ -1,13 +1,13 @@
 # 商品の投稿と反映（二人用）
 
-drop world の商品は **Lemon Squeezy だけ** で管理します。
-サイト（drop-world.com）は Lemon の商品を自動で取り込んで表示するので、
-**商品を出すのに GitHub もコードも触る必要はありません。**
+商品そのもの（名前・価格・説明・画像・ダウンロードファイル）は **Lemon Squeezy** で管理します。
+**分類（どのカテゴリに出すか）だけは GitHub の `content/tags.json`** で管理します。
 
 ```
   あなた ─┐
-           ├─→  Lemon Squeezy（同じストアに二人とも所属）
-  相方   ─┘         商品名・価格・説明・画像・zip を登録して Publish
+           ├─→  Lemon Squeezy        商品名・価格・説明・画像・zip を登録して Publish
+  相方   ─┘         ＋
+                GitHub の content/tags.json   品番ごとに分類タグを1行足す
                           │
                           │  1時間ごとに自動 ／ 急ぐときは手動ボタン
                           ▼
@@ -16,6 +16,10 @@ drop world の商品は **Lemon Squeezy だけ** で管理します。
                           ▼
                     drop-world.com に反映
 ```
+
+> **なぜ分けるのか**: Lemon にはカテゴリ機能がありません。分類をリポジトリで持つと、
+> 打ち間違い（`sittting` など）をビルドで弾けて、日英のラベルも付けられます。
+> 分類を書かなくても商品は出ます（品番の記号どおりの被写体に入ります）。
 
 ---
 
@@ -39,7 +43,7 @@ Lemon 管理画面 → **Products** → **+ New product**
 | 欄 | 入れるもの |
 | --- | --- |
 | **Name** | **品番 + 半角スペース + 商品名**。例: `DW-PPL-004 Commuters — Morning Rush` |
-| **Description** | 英語の説明文。**最後に決まった行**（下記）を書く |
+| **Description** | 英語の説明文。最後に `Figures: 6` と `Formats: DWG, AI` の2行 |
 | **Pricing** | Single payment で金額（通貨はストアの設定に従う） |
 | **Media** | 手順1の画像。**1枚目がサイトのサムネイル**になります |
 | **Files** | 販売する zip |
@@ -53,24 +57,21 @@ Outline and fill sit on separate layers, drawn at 1:1 in millimetres.
 
 Figures: 6
 Formats: DWG, AI
-Action: walking, carrying
-View: top, elevation
-Scene: japanese-street
 ```
 
-最後の決まった行は、サイトの仕様表と分類に使われ、**本文には出ません**。
-
-| 行 | 役割 | 省略 |
-| --- | --- | --- |
-| `Figures: 6` | 収録点数 | 可 |
-| `Formats: DWG, AI` | 収録形式 | 可 |
-| `Action:` / `View:` / `Scene:` | サブカテゴリ（下記） | 可 |
+`Figures` と `Formats` はサイトの仕様表に使われ、本文には出ません。
+**分類（Action: など）はここには書きません。** `content/tags.json` に書きます（手順4）。
 
 ### 3. Publish する
 
 右上の **Publish**。**Draft のままではサイトに出ません。**
 
-### 4. 反映を待つ
+### 分類（タグ）を付ける
+
+GitHub の `content/tags.json` に1ブロック足します（→ [下の節](#分類タグを付ける)）。
+**書かなくても商品は出ます**（品番の記号どおりの被写体に入ります）。
+
+### 5. 反映を待つ
 
 - **何もしなければ最大1時間**でサイトに出ます
 - 急ぐとき: GitHub の [Actions](https://github.com/kenchikujishu/drop-world/actions) → **サイトを更新** → **Run workflow**（1〜3分で反映）
@@ -86,12 +87,13 @@ DW-PPL-004
    └────── カテゴリ記号
 ```
 
-| 記号 | カテゴリ |
+| 記号 | 主な被写体 |
 | --- | --- |
 | `PPL` | People（人物） |
+| `FUR` | Furniture（家具） |
 | `VEG` | Vegetation（植栽） |
 | `ANM` | Animal（動物） |
-| `FRN` | Furniture（家具） |
+| `SCN` | 複数の被写体が混ざるシーンパック |
 
 **二人で同じ番号を使わないよう、番号の帯を分けます。**
 
@@ -105,31 +107,57 @@ DW-PPL-004
 
 ---
 
-## サブカテゴリ（Action / View / Scene）
+## 分類（タグ）を付ける
 
-メインカテゴリ（品番の記号）とは別に、**3つの軸**で分類します。説明文に行を足すだけです。
+GitHub の [`content/tags.json`](https://github.com/kenchikujishu/drop-world/blob/main/content/tags.json)
+を開き、**鉛筆マーク（Edit this file）**を押して、品番ごとに1ブロック足します。
 
-| 行 | 軸 | 書ける言葉 |
+```json
+{
+  "tags": {
+    "DW-PPL-004": {
+      "contains": ["people"],
+      "origin": ["japanese"],
+      "action": ["walking", "carrying"],
+      "scene": ["street"],
+      "views": ["plan", "elevation"]
+    }
+  }
+}
+```
+
+書けたら下の **Commit changes** を押すだけです。1〜3分でサイトに反映されます。
+
+| 項目 | 意味 | 書ける言葉 |
 | --- | --- | --- |
-| `Action:` | 動作 | `standing` / `sitting` / `walking` / `running` / `climbing-stairs` / `using-tools` / `carrying` / `talking` / `cycling` / `working` |
-| `View:` | 投影法 | `top` / `elevation` / `axonometric` |
-| `Scene:` | シーン | `japanese-street` / `farm` / `hospital` / `office` / `school` / `park` / `station` / `construction-site` / `retail` / `housing` |
+| `contains` | 含まれる被写体（複数可） | `people` / `furniture` / `vegetation` / `animal` |
+| `origin` | 地域（任意） | `japanese` |
+| `action` | 動作（人物・動物のみ。任意） | `standing` / `walking` / `running` / `sitting` / `cycling` / `climbing-stairs` / `using-tools` / `carrying` / `talking` |
+| `scene` | 使う場面（任意・複数可） | `street` / `park` / `station` / `school` / `hospital` / `office` / `farm` / `construction-site` / `retail` / `housing` |
+| `views` | 収録している投影法 | `plan` / `elevation` / `axo` |
+| `items` | パックに入っている図の個別 ID（任意） | `jp-walk-umbrella-01` のような自由な文字列 |
 
 ### 決まりごと
 
-- **1つの行に複数書ける。** カンマ区切り: `Action: sitting, talking`
-- **迷ったら書かない。** 空でも商品は出ます（そのサブカテゴリのページに載らないだけ）
-- **いろんな投影法をまとめたセット**は、入っているものを全部書く: `View: top, elevation, axonometric`
-  （1つに絞る必要はありません。3つのページすべてに出ます）
-- **表に無い言葉は無視されます**（ビルドのログに警告が出ます）。
-  言葉を増やしたいときは `content/subcategories.json` に1行足す（オーナーに依頼）
-- 大文字・小文字、スペースは気にしなくて大丈夫です。`Japanese Street` → `japanese-street` として扱います
+- **書かなくてもよい。** 何も書かなければ、品番の記号どおりの被写体だけが付きます
+  （`DW-PPL-004` なら people）
+- **複数書ける。** `"action": ["walking", "carrying"]`
+- **投影法を混載したセットは全部書く。** `"views": ["plan", "elevation", "axo"]`。
+  1種類だけのときは、カードに「Plan only（平面のみ）」と出ます
+- **シーンパック（`DW-SCN-001`）は `contains` に入っている被写体すべてのページに出ます。**
+  カードに「Scene set」のバッジが付きます
+- **表に無い言葉を書くとビルドが失敗します**（＝サイトは前のまま。打ち間違いが公開されません）。
+  失敗すると Actions が赤くなり、どの品番のどの言葉が悪いか日本語で出ます
+- 言葉を増やしたいときは `content/taxonomy.json` に1行足します（オーナーに依頼）
 
 ### サイトでの出かた
 
-- ヘッダーの **人物** にカーソルを合わせると、その軸ごとに一覧が出ます
-- `https://drop-world.com/ja/categories/people/sitting` のようなページが自動でできます
-- **商品が1点も無いサブカテゴリのページは作られません**（空のページを検索エンジンに見せないため）
+- `https://drop-world.com/ja/people/` — 被写体のページ
+- `https://drop-world.com/ja/people/walking/` — 被写体 × 動作 / シーン
+- `https://drop-world.com/ja/scenes/street/` — シーン（被写体は混ざる）
+- ヘッダーの **人物** にカーソルを合わせると、この一覧が出ます
+- **商品が2点未満の組み合わせはページを作りません**（中身の薄いページを作らないため）。
+  メニューには出ますが、リンクにはなりません
 
 ---
 
@@ -155,8 +183,8 @@ DW-PPL-004
 | 価格を変える | Lemon で変えるだけ（最大1時間で反映） |
 | 画像・説明を直す | Lemon で直すだけ |
 | 販売をやめる | Lemon で Draft に戻す（サイトから消える） |
-| カテゴリを増やす | `content/categories.json` に1行足す（ここだけはコード変更） |
-| サブカテゴリの言葉を増やす | `content/subcategories.json` に1行足す（同上） |
+| 分類を変える | GitHub の `content/tags.json` を直す |
+| 分類に使える言葉を増やす | `content/taxonomy.json` に1行足す（オーナーに依頼） |
 
 ---
 
@@ -164,7 +192,7 @@ DW-PPL-004
 
 1. **Publish** しているか
 2. 商品名が `DW-XXX-000 ` で始まっているか（ハイフン、3桁の番号、そのあと半角スペース）
-3. 記号が `PPL` / `VEG` / `ANM` のどれかか
+3. 記号が `PPL` / `FUR` / `VEG` / `ANM` / `SCN` のどれかか
 4. 1時間待ったか。GitHub の Actions で最新の「サイトを更新」が **緑のチェック** になっているか
 5. あなたの Mac で次を実行すると、**出る商品・出ない商品と理由**が表で出ます
 

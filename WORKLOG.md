@@ -1,5 +1,37 @@
 # 作業ログ
 
+## 2026-09-21 — 分類をリポジトリ側に移し、URL を短くした
+
+オーナーから仕様書。**Lemon には分類を持たせず、リポジトリで管理する**方針に変更。
+仕様書は Astro 前提（実物は Next.js）、Lemon の ID で紐付ける前提（実物は品番）だったので、
+違いを報告して判断をもらってから実装した。
+
+### 決まったこと
+
+- 分類は **`content/tags.json`（品番 → タグ）の1ファイル**にまとめる。GitHub の Web 画面で編集できる
+- Lemon との紐付けは**品番のまま**（Copy to Live Mode で LS の ID は全部変わるため）
+- 品番は `DW-` を維持。家具の記号は `FRN` → **`FUR`**、シーンパック **`SCN`** を追加
+- URL は `/categories/people` → **`/people/`** に短縮（旧 URL は middleware で 301）
+
+### 分類の形
+
+`content/taxonomy.json` に5軸。`contains` / `origin` / `action` / `scene` / `views`。
+**`contains` は複数可** なので、被写体が混ざるシーンパックを人物にも家具にも出せる。
+tags.json に語彙外の値があると**取り込みが失敗する**（打ち間違いを公開しないため）。
+
+### ページ
+
+| URL | 中身 |
+| --- | --- |
+| `/[lang]/people/` | その被写体を含む商品。動作とシーンで絞り込み |
+| `/[lang]/people/walking/` | 被写体 × 動作 / シーン |
+| `/[lang]/scenes/` | シーンごとの一覧（被写体混在） |
+| `/[lang]/scenes/street/` | そのシーンの商品 |
+
+`MIN_PRODUCTS_PER_PAGE`（既定2）未満の組み合わせはページを作らない（`lib/products.ts` の定数）。
+投影法はナビに出さず、カードのバッジ（`PLAN` / `ELEVATION` / `AXO`、1種類なら `PLAN ONLY`）で見せる。
+被写体が複数のパックには `SCENE SET` バッジ。
+
 ## 2026-09-21 — メニューは商品が0件でも全部出す
 
 toffu.co のようなメガメニューにしたい、というオーナーの指示。

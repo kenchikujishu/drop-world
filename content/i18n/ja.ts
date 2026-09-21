@@ -32,6 +32,7 @@ export const ja: Dictionary = {
     view: '視点',
     category: 'カテゴリ',
     allProducts: 'すべての商品',
+    scenes: 'シーン',
     browseAll: 'すべての商品を見る',
     results: '件',
     noResults: '条件に合う商品がまだありません。',
@@ -107,8 +108,14 @@ export const ja: Dictionary = {
     empty: '商品を準備中です。公開まで少しお待ちください。',
   },
 
-  categoryPage: {
-    leadPrefix: 'このカテゴリの CAD 添景',
+  browse: {
+    leadPrefix: 'CAD 添景',
+    filterBy: '絞り込み',
+    scenesTitle: 'シーン',
+    scenesLead: '使う場面ごとにまとめたセット。被写体は混ざります。',
+    sceneSet: 'シーンセット',
+    inScene: 'このシーンのために作図したセット',
+    empty: 'このカテゴリの商品はまだありません。作図でき次第、追加していきます。',
   },
 
   product: {

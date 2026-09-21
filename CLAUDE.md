@@ -14,11 +14,12 @@ CAD 添景データ（人物・植栽・動物）を販売するストア。**�
 
 ## 商品データの流れ（最重要）
 
-**商品の出どころは LS だけ。リポジトリに商品データは置かない。**
+**商品そのものの出どころは LS だけ。分類（タグ）の出どころは `content/tags.json` だけ。**
 
 ```
-二人が LS に投稿（商品名・価格・説明・画像・zip → Publish）
-  → scripts/lemon-sync.mjs が LS API から取り込む（npm run build の前に自動で走る）
+LS: 商品名・価格・説明・画像・zip（Publish）
+content/tags.json: 品番 → 分類タグ
+  → scripts/lemon-sync.mjs が両方を突き合わせる（npm run build の前に自動で走る）
   → content/catalog.generated.json（gitignore）
   → next build で全ページを静的生成
   → Cloudflare Workers
@@ -27,15 +28,19 @@ CAD 添景データ（人物・植栽・動物）を販売するストア。**�
 - **反映**: GitHub Actions（`.github/workflows/deploy.yml`）が push・1時間ごと・手動の3通りでデプロイ
 - **公開中の Worker は API キーを持たず、LS と通信しない。** 商品データはビルド時に JSON として焼き込む
   （Workers にファイルシステムが無い問題も、LS 障害時にサイトが落ちる問題もこれで避けている）
-- **LS と商品の紐付けは、商品名の先頭の品番 `DW-<記号>-<3桁>`。LS の ID は使わない。**
+- **LS と分類の紐付けは、商品名の先頭の品番 `DW-<記号>-<3桁>`。LS の ID は使わない。**
   テスト→本番へのコピーで ID とチェックアウト URL は変わるが、品番は変わらないため
 - 品番を小文字にしたものが URL（`/products/dw-ppl-001`）。**品番は一度付けたら変えない**
-- カテゴリ記号は `content/categories.json`（PPL / VEG / ANM / FRN）。取り込みスクリプトとサイトで共有するため JSON
-- **サブカテゴリは `content/subcategories.json`**。3軸（action / view / scene）。1商品に複数付く。
-  説明文の `Action:` / `View:` / `Scene:` の行から取り、**語彙に無い語は無視して警告**（表記ゆれ防止）。
-  id は全軸を通して一意（重複していたら取り込みが失敗する）。ページは `/categories/<カテゴリ>/<サブ>`、
-  商品がある組み合わせだけ生成する
-- 説明文の `Figures: 6` / `Formats: DWG, AI` の行は仕様として抜き出し、本文からは除く
+- 品番の記号は `content/taxonomy.json` の `packCodes`（PPL / FUR / VEG / ANM / SCN）
+- **分類の語彙は `content/taxonomy.json`**、5軸:
+  `contains`（被写体・複数可）/ `origin` / `action` / `scene` / `views`。
+  `content/tags.json` に語彙外の値があると**取り込みが失敗する**（打ち間違いを公開しないため）
+- タグを書かない品番は、品番の記号から決まる被写体だけが付く（`DW-SCN-` は空）
+- URL: `/[subject]`、`/[subject]/[filter]`（filter は action か scene）、`/scenes`、`/scenes/[scene]`。
+  **`MIN_PRODUCTS_PER_PAGE`（既定2）未満の組み合わせはページを作らない**（`lib/products.ts`）。
+  旧 `/categories/*` は middleware で 301
+- 説明文の `Figures: 6` / `Formats: DWG, AI` の行は仕様として抜き出し、本文からは除く。
+  説明文に書かれた `Action:` などの分類行は**使わず、警告する**（分類は tags.json）
 - **商品画像は LS の API から1枚しか取れない**（`large_thumb_url`。Media の2枚目以降は API に出ない）。
   カードのホバー用2枚目は、説明文に貼られた画像か `Hover: https://…` の行から取る
 - 説明文の HTML は描画しない（テキストにして段落へ分ける）
@@ -90,6 +95,9 @@ CAD 添景データ（人物・植栽・動物）を販売するストア。**�
 - 商品画像は正方形（LS の商品画像が 1000×1000 のため、カード・ギャラリーとも 1:1）
 - ヒーローは「DROP WORLD」のワードマークだけ。キャッチコピーも画像も置かない（オーナーの指示、2026-09-21）
 - トップの一覧は「新着」＝新しい順に12点（おすすめ・注目は作らない）
+- **カテゴリとサブカテゴリは、商品が0件でもメニューに出す**（オーナーの指示、2026-09-21）。
+  ただしページが無いものはリンクにせず淡色のテキストにする
+- 投影法（plan / elevation / axo）はナビに出さず、カードのバッジで見せる
 - 一覧のサムネイルはカーソルを合わせると2枚目にクロスフェードする（2枚目がある商品だけ）
 
 ## i18n

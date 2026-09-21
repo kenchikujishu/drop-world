@@ -4,9 +4,16 @@ import { notFound } from 'next/navigation';
 import BuyButton from '@/components/BuyButton';
 import Gallery from '@/components/Gallery';
 import ProductGrid from '@/components/ProductGrid';
-import { LANGS, SUB_AXES, categoryLabel, type Lang } from '@/content/taxonomy';
+import { AXES, LANGS, subjectLabel, type Lang } from '@/content/taxonomy';
 import { getDict, href } from '@/lib/i18n';
-import { getAllProducts, getProduct, getRelated } from '@/lib/products';
+import {
+  getAllProducts,
+  getProduct,
+  getRelated,
+  hasFilterPage,
+  hasScenePage,
+  hasSubjectPage,
+} from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
 import styles from './product.module.css';
 
@@ -53,9 +60,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
   const dict = getDict(lang);
   const related = getRelated(product);
 
+  const subject = product.contains[0];
   const specs = [
     { label: dict.product.sku, value: product.sku },
-    { label: dict.common.category, value: categoryLabel(product.category, lang) },
     product.figures
       ? { label: dict.product.figures, value: `${product.figures}${lang === 'ja' ? '点' : ''}` }
       : null,
@@ -63,20 +70,43 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
     product.publishedAt ? { label: dict.common.released, value: product.publishedAt } : null,
   ].filter((spec): spec is { label: string; value: string } => spec !== null);
 
-  // サブカテゴリは軸ごとに1行。同じカテゴリの絞り込みページへのリンクにする。
-  const tagRows = SUB_AXES.map((axis) => ({
-    axis,
-    items: axis.items.filter((item) => product.subcategories.includes(item.id)),
-  })).filter((row) => row.items.length > 0);
+  /**
+   * 分類は軸ごとに1行。ページがあるものだけリンクにする
+   * （点数が少ない組み合わせはページを作っていないため）。
+   */
+  const tagRows = AXES.map((axis) => {
+    const ids = (product[axis.id as 'contains' | 'origin' | 'action' | 'scene' | 'views'] ??
+      []) as string[];
+    return {
+      axis,
+      items: axis.items
+        .filter((item) => ids.includes(item.id))
+        .map((item) => ({
+          ...item,
+          url:
+            axis.id === 'contains'
+              ? hasSubjectPage(item.id)
+                ? href(lang, `/${item.id}`)
+                : null
+              : axis.id === 'scene'
+                ? hasScenePage(item.id)
+                  ? href(lang, `/scenes/${item.id}`)
+                  : null
+                : axis.id === 'action' && subject && hasFilterPage(subject, item.id)
+                  ? href(lang, `/${subject}/${item.id}`)
+                  : null,
+        })),
+    };
+  }).filter((row) => row.items.length > 0);
 
   return (
     <>
       <nav className={`container ${styles.breadcrumb}`} aria-label="Breadcrumb">
         <Link href={href(lang, '/products')}>{dict.product.backToProducts}</Link>
         <span aria-hidden="true">/</span>
-        <Link href={href(lang, `/categories/${product.category}`)}>
-          {categoryLabel(product.category, lang)}
-        </Link>
+        {subject && hasSubjectPage(subject) && (
+          <Link href={href(lang, `/${subject}`)}>{subjectLabel(subject, lang)}</Link>
+        )}
       </nav>
 
       <div className={`container ${styles.layout}`}>
@@ -94,7 +124,8 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
 
         <div className={styles.info}>
           <p className="kicker">
-            {product.sku} · {categoryLabel(product.category, lang)}
+            {product.sku}
+            {subject ? ` · ${subjectLabel(subject, lang)}` : ''}
           </p>
           <h1 className={styles.title}>{product.title}</h1>
           <p className={styles.summary}>{product.summary}</p>
@@ -121,14 +152,15 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
                 <div key={axis.id} className={styles.specRow}>
                   <dt>{axis.label[lang]}</dt>
                   <dd className={styles.specLinks}>
-                    {items.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={href(lang, `/categories/${product.category}/${item.id}`)}
-                      >
-                        {item.label[lang]}
-                      </Link>
-                    ))}
+                    {items.map((item) =>
+                      item.url ? (
+                        <Link key={item.id} href={item.url}>
+                          {item.label[lang]}
+                        </Link>
+                      ) : (
+                        <span key={item.id}>{item.label[lang]}</span>
+                      ),
+                    )}
                   </dd>
                 </div>
               ))}

@@ -5,7 +5,14 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { LANGS, isLang, type Lang } from '@/content/taxonomy';
 import { getDict } from '@/lib/i18n';
-import { getCategoryCounts, getSubcategoryCounts } from '@/lib/products';
+import {
+  getAllFilterCounts,
+  getSceneCounts,
+  getSubjectCounts,
+  hasFilterPage,
+  hasScenePage,
+} from '@/lib/products';
+import { FILTER_AXES, SCENE_IDS, SUBJECT_IDS } from '@/content/taxonomy';
 import { absoluteUrl, siteConfig } from '@/lib/site';
 import '../globals.css';
 
@@ -80,7 +87,18 @@ export default async function RootLayout({
   if (!isLang(rawLang)) notFound();
   const lang = rawLang as Lang;
   const dict = getDict(lang);
-  const categoryCounts = getCategoryCounts();
+  const subjectCounts = getSubjectCounts();
+  const sceneCounts = getSceneCounts();
+  // ページが存在する組み合わせだけメニューでリンクにする（ページを作らない＝少数の組み合わせ）。
+  const filterPages = Object.fromEntries(
+    SUBJECT_IDS.map((subject) => [
+      subject,
+      FILTER_AXES.flatMap((axis) => axis.items.map((item) => item.id)).filter((filter) =>
+        hasFilterPage(subject, filter),
+      ),
+    ]),
+  );
+  const scenePages = SCENE_IDS.filter((scene) => hasScenePage(scene));
 
   return (
     <html lang={lang} className={`${display.variable} ${body.variable} ${mono.variable}`}>
@@ -92,11 +110,19 @@ export default async function RootLayout({
           <Header
             lang={lang}
             dict={dict}
-            categoryCounts={categoryCounts}
-            subcategoryCounts={getSubcategoryCounts()}
+            subjectCounts={subjectCounts}
+            filterCounts={getAllFilterCounts()}
+            sceneCounts={sceneCounts}
+            filterPages={filterPages}
+            scenePages={scenePages}
           />
           <main id="main">{children}</main>
-          <Footer lang={lang} dict={dict} categoryCounts={categoryCounts} />
+          <Footer
+            lang={lang}
+            dict={dict}
+            subjectCounts={subjectCounts}
+            hasScenes={scenePages.length > 0}
+          />
         </div>
       </body>
     </html>

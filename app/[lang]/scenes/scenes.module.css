@@ -1,0 +1,32 @@
+.sceneSection {
+  padding-block: 2rem 2.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.sceneSection:last-child {
+  border-bottom: none;
+  padding-bottom: 5rem;
+}
+
+.sceneHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sceneTitle {
+  font-size: var(--step-2);
+}
+
+.sceneLink {
+  font-size: var(--step--1);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.empty {
+  padding-block: 3rem 5rem;
+  color: var(--ink-50);
+}

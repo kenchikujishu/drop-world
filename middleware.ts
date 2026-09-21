@@ -19,6 +19,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
+  // 旧 URL（/ja/categories/people/sitting）を新 URL（/ja/people/sitting）へ恒久転送する。
+  // 2026-09-21 にカテゴリの URL を短くした。sitemap に出していたので 301 で残す。
+  const legacy = pathname.match(/^\/(en|ja)\/categories\/(.+)$/);
+  if (legacy) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${legacy[1]}/${legacy[2]}`;
+    return NextResponse.redirect(url, 301);
+  }
+
   const hasLang = LANGS.some(
     (lang) => pathname === `/${lang}` || pathname.startsWith(`/${lang}/`),
   );

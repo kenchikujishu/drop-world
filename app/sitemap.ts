@@ -1,12 +1,18 @@
 import type { MetadataRoute } from 'next';
-import { CATEGORY_IDS, LANGS } from '@/content/taxonomy';
-import { getAllProducts, getCategoryCounts, getSubcategoryCounts } from '@/lib/products';
+import { FILTER_AXES, LANGS, SCENE_IDS, SUBJECT_IDS } from '@/content/taxonomy';
+import {
+  getAllProducts,
+  hasFilterPage,
+  hasScenePage,
+  hasSubjectPage,
+} from '@/lib/products';
 import { absoluteUrl } from '@/lib/site';
 
 /** 静的ページのパス（言語プレフィックスなし）。 */
 const STATIC_PATHS = [
   '',
   '/products',
+  '/scenes',
   '/license',
   '/faq',
   '/about',
@@ -19,20 +25,17 @@ const STATIC_PATHS = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const products = getAllProducts();
-  const counts = getCategoryCounts();
-  const subCounts = getSubcategoryCounts();
+  const filters = FILTER_AXES.flatMap((axis) => axis.items.map((item) => item.id));
   const now = new Date();
 
   const paths = [
     ...STATIC_PATHS,
-    // 商品が無いカテゴリのページは存在しないので載せない
-    ...CATEGORY_IDS.filter((category) => (counts[category] ?? 0) > 0).map(
-      (category) => `/categories/${category}`,
+    // ページが存在するものだけ載せる（商品が無い / 少ない組み合わせはページを作っていない）
+    ...SUBJECT_IDS.filter(hasSubjectPage).map((subject) => `/${subject}`),
+    ...SUBJECT_IDS.flatMap((subject) =>
+      filters.filter((filter) => hasFilterPage(subject, filter)).map((filter) => `/${subject}/${filter}`),
     ),
-    // サブカテゴリは商品がある組み合わせだけページがある
-    ...Object.entries(subCounts).flatMap(([category, subs]) =>
-      Object.keys(subs).map((sub) => `/categories/${category}/${sub}`),
-    ),
+    ...SCENE_IDS.filter(hasScenePage).map((scene) => `/scenes/${scene}`),
     ...products.map((product) => `/products/${product.slug}`),
   ];
 

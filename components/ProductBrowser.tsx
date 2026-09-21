@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CATEGORIES, type Lang } from '@/content/taxonomy';
+import { SUBJECTS, type Lang } from '@/content/taxonomy';
 import type { Dictionary } from '@/content/i18n/en';
 import type { Product } from '@/lib/products';
 import ProductGrid from './ProductGrid';
@@ -19,22 +19,22 @@ export default function ProductBrowser({
   products,
   lang,
   dict,
-  /** カテゴリページから使うときは、そのカテゴリに固定してカテゴリ絞り込みを隠す。 */
-  lockedCategory,
+  /** 被写体ページから使うときは、その被写体に固定して被写体の絞り込みを隠す。 */
+  lockedSubject,
 }: {
   products: Product[];
   lang: Lang;
   dict: Dictionary;
-  lockedCategory?: string;
+  lockedSubject?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [panelOpen, setPanelOpen] = useState(false);
 
-  // 商品が1点も無いカテゴリは選択肢に出さない
-  const availableCategories = useMemo(
-    () => CATEGORIES.filter((c) => products.some((p) => p.category === c.id)),
+  // 商品が1点も無い被写体は選択肢に出さない
+  const availableSubjects = useMemo(
+    () => SUBJECTS.filter((s) => products.some((p) => p.contains.includes(s.id))),
     [products],
   );
 
@@ -74,7 +74,10 @@ export default function ProductBrowser({
     const max = selected.max === '' ? null : Number(selected.max);
 
     const result = products.filter((product) => {
-      if (selected.categories.length > 0 && !selected.categories.includes(product.category)) {
+      if (
+        selected.categories.length > 0 &&
+        !selected.categories.some((id) => product.contains.includes(id))
+      ) {
         return false;
       }
       if (min !== null && Number.isFinite(min) && product.price.amount < min) return false;
@@ -112,18 +115,18 @@ export default function ProductBrowser({
         className={`${styles.sidebar} ${panelOpen ? styles.sidebarOpen : ''}`}
         aria-label={dict.common.filters}
       >
-        {!lockedCategory && availableCategories.length > 1 && (
+        {!lockedSubject && availableSubjects.length > 1 && (
           <fieldset className={styles.group}>
             <legend className="kicker">{dict.common.category}</legend>
             <div className={styles.options}>
-              {availableCategories.map((category) => (
-                <label key={category.id} className={styles.option}>
+              {availableSubjects.map((subject) => (
+                <label key={subject.id} className={styles.option}>
                   <input
                     type="checkbox"
-                    checked={selected.categories.includes(category.id)}
-                    onChange={() => toggleCategory(category.id)}
+                    checked={selected.categories.includes(subject.id)}
+                    onChange={() => toggleCategory(subject.id)}
                   />
-                  <span>{category.label[lang]}</span>
+                  <span>{subject.label[lang]}</span>
                 </label>
               ))}
             </div>

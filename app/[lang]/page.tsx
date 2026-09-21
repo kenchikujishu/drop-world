@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import ProductGrid from '@/components/ProductGrid';
-import { CATEGORIES, type Lang } from '@/content/taxonomy';
+import { SCENES, SUBJECTS, type Lang } from '@/content/taxonomy';
 import { getDict, href } from '@/lib/i18n';
-import { getCategoryCounts, getLatest } from '@/lib/products';
+import { getLatest, getSceneCounts, getSubjectCounts } from '@/lib/products';
 import styles from './home.module.css';
 
 export default async function HomePage({ params }: { params: Promise<{ lang: Lang }> }) {
   const { lang } = await params;
   const dict = getDict(lang);
   const latest = getLatest(12);
-  const counts = getCategoryCounts();
-  // 商品が1点も無いカテゴリは出さない（空のページに誘導しないため）
-  const categories = CATEGORIES.filter((category) => (counts[category.id] ?? 0) > 0);
+  const counts = getSubjectCounts();
+  const sceneCounts = getSceneCounts();
+  const sceneTotal = Object.values(sceneCounts).reduce((sum, n) => sum + n, 0);
 
   return (
     <>
@@ -47,32 +47,58 @@ export default async function HomePage({ params }: { params: Promise<{ lang: Lan
         </section>
       )}
 
-      {/* ---- カテゴリ ---- */}
-      {categories.length > 0 && (
-        <section className={`container ${styles.section}`}>
-          <div className={styles.sectionHead}>
-            <div>
-              <h2 className={styles.sectionTitle}>{dict.home.categoriesTitle}</h2>
-            </div>
+      {/* ---- 被写体とシーン（商品が0件でも出す） ---- */}
+      <section className={`container ${styles.section}`}>
+        <div className={styles.sectionHead}>
+          <div>
+            <h2 className={styles.sectionTitle}>{dict.home.categoriesTitle}</h2>
           </div>
+        </div>
 
-          <ul className={styles.categoryGrid}>
-            {categories.map((category) => (
-              <li key={category.id}>
-                <Link
-                  href={href(lang, `/categories/${category.id}`)}
-                  className={styles.categoryTile}
-                >
-                  <span className={styles.categoryName}>{category.label[lang]}</span>
-                  <span className={`mono ${styles.categoryCount}`}>
-                    {String(counts[category.id] ?? 0).padStart(2, '0')}
+        <ul className={styles.categoryGrid}>
+          {SUBJECTS.map((subject) => {
+            const count = counts[subject.id] ?? 0;
+            const label = (
+              <>
+                <span className={styles.categoryName}>{subject.label[lang]}</span>
+                <span className={`mono ${styles.categoryCount}`}>
+                  {String(count).padStart(2, '0')}
+                </span>
+              </>
+            );
+            return (
+              <li key={subject.id}>
+                {count > 0 ? (
+                  <Link href={href(lang, `/${subject.id}`)} className={styles.categoryTile}>
+                    {label}
+                  </Link>
+                ) : (
+                  // ページが無いのでリンクにしない。分類だけ先に見せる。
+                  <span className={`${styles.categoryTile} ${styles.categoryTileEmpty}`}>
+                    {label}
                   </span>
-                </Link>
+                )}
               </li>
-            ))}
-          </ul>
-        </section>
-      )}
+            );
+          })}
+
+          <li>
+            {sceneTotal > 0 ? (
+              <Link href={href(lang, '/scenes')} className={styles.categoryTile}>
+                <span className={styles.categoryName}>{dict.common.scenes}</span>
+                <span className={`mono ${styles.categoryCount}`}>
+                  {String(SCENES.filter((s) => (sceneCounts[s.id] ?? 0) > 0).length).padStart(2, '0')}
+                </span>
+              </Link>
+            ) : (
+              <span className={`${styles.categoryTile} ${styles.categoryTileEmpty}`}>
+                <span className={styles.categoryName}>{dict.common.scenes}</span>
+                <span className={`mono ${styles.categoryCount}`}>00</span>
+              </span>
+            )}
+          </li>
+        </ul>
+      </section>
 
       {/* ---- 購入の流れ ---- */}
       <section className={styles.bandSection}>
